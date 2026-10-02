@@ -24,6 +24,52 @@ tetapi garisnya tipis. Jaga lima hal ini — SPK-mu lebih berharga daripada pela
 
 ---
 
+## 0a. Produk yang dijual: Rumoh Aspirasi TANPA modul strategi
+
+Kalimat yang kamu pakai kalau ditanya "ini sistem apa":
+
+> "Sistem pengelolaan aspirasi warga dari reses, Pak. Aspirasi masuk, dilacak sampai
+> tindak lanjutnya, dan warganya dapat kabar. Laporan resesnya terbentuk sendiri."
+
+Itu saja. Tidak ditambah apa-apa.
+
+**Tiga aturan mutlak soal modul strategi / pendataan dukungan (M19):**
+
+1. **Tidak ada dalam percakapan ini.** Tidak disebut, tidak disinggung, tidak dijadikan
+   "nanti bisa ditambah kalau Bapak mau". Sekali satu anggota dewan tahu kamu punya sistem
+   pemetaan dukungan per TPS, kabar itu menyebar di kalangan mereka — dan posisimu sebagai
+   Pendamping Desa yang netral habis. Baik yang mendengar itu tertarik maupun curiga,
+   dua-duanya merugikanmu.
+2. **Instance demo dan instance klien dibangun tanpa modul itu**, bukan sekadar dimatikan
+   saklarnya. Daftar periksa di bagian 9.
+3. Kalau ada yang bertanya *"bisa nggak sekalian untuk pemenangan?"* — jawab singkat:
+   *"Itu di luar yang saya kerjakan, Pak."* Titik. Jangan menjelaskan alasannya, jangan
+   minta maaf, langsung alihkan ke pertanyaan berikutnya.
+
+## 0b. Angka yang kamu pegang di kepala (jangan diucapkan)
+
+Di lima percakapan ini kamu tidak menyebut harga. Tapi kamu perlu angka di kepala supaya
+tidak panik menawar rendah kalau ada yang bertanya duluan.
+
+Perkiraan kasar biaya produk A, per klien per tahun:
+
+| Pos | Perkiraan |
+|---|---|
+| Infrastruktur (VPS kecil, storage, backup, domain) | Rp 2–3 jt |
+| WhatsApp — **kalau OTP dihapus**, tinggal notifikasi seperlunya | Rp 0–2 jt |
+| Pemeliharaan, 50–80 jam @ Rp 200rb | Rp 10–16 jt |
+| **Biaya pokok** | **± Rp 15–20 jt** |
+
+Dengan margin wajar: **kisaran Rp 20–30 juta per anggota per tahun.** Klien pertama boleh
+jauh di bawah itu — di klien pertama kamu membeli studi kasus dan testimoni, bukan laba.
+
+Lupakan dua angka yang beredar sebelumnya:
+- **Rp 4–8 juta** — itu tebakan untuk produk yang salah, jauh terlalu rendah.
+- **Rp 72–165 juta** — itu produk B, dengan 250 jam tenaga setahun dan ongkos OTP WhatsApp
+  yang belum dipangkas. Bukan ini yang kamu jual.
+
+---
+
 ## 1. Menyusun daftar 10 nama (± 2 jam)
 
 Saya sengaja tidak mencantumkan nama — daftar anggota DPRA per dapil tidak bisa saya pastikan
@@ -231,3 +277,24 @@ perorangan menjadi instansi, lewat e-Katalog PT Kanal — saluran yang sudah men
 **Ukuran keberhasilan 10 hari ini bukan dapat pelanggan.** Ukurannya: 5 percakapan selesai
 dan satu keputusan diambil berdasarkan fakta. Nol rupiah masuk di tahap ini adalah hasil
 yang normal dan benar.
+
+---
+
+## 9. Daftar periksa sebelum ada demo apa pun
+
+Dikerjakan sebelum kamu memperlihatkan layar ke siapa pun. Saklar `modul_strategi_aktif`
+tidak cukup — kalau kodenya dan datanya masih ada di instance, risikonya masih ada.
+
+- [ ] Rute dan halaman modul strategi tidak ikut dalam build A
+- [ ] Tabel `PendataanDukungan` dan turunannya tidak dibuat di instance A
+- [ ] Kolom `tps_id` di `users` dilepas atau dibiarkan kosong — produk A tidak butuh TPS
+- [ ] Peran `verifikator_strategi` dihapus dari daftar peran
+- [ ] Target "gap perolehan" dan segala rujukan ke perolehan partai dihapus dari antarmuka
+- [ ] Seed 712 gampong **tetap dipakai** — daftar wilayah itu data induk yang sah dan
+      berguna untuk produk A. Yang dibuang data dukungannya, bukan daftar gampongnya.
+- [ ] Instance demo diisi data karangan, bukan data warga sungguhan
+- [ ] Cari di seluruh kode: nama partai, "dukungan", "strategi", "TPS", "pemenangan" —
+      pastikan tidak ada yang muncul di layar yang akan dilihat calon klien
+
+Ini pekerjaan setengah hari sampai dua hari, bukan pembongkaran. Kerjakan **setelah**
+lima percakapan selesai, bukan sebelum — kecuali ada yang minta demo lebih cepat.
