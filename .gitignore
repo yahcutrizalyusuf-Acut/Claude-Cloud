@@ -7,6 +7,8 @@ node/node_modules/
 node/dist/
 
 # Python
+__pycache__/
+*.pyc
 python/__pycache__/
 python/*.pyc
 python/*.pyo
@@ -24,3 +26,7 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Data harga yang diunduh sendiri
+forex-lab/data/*.csv
+forex-lab/data/*.txt
