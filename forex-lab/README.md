@@ -47,6 +47,12 @@ python3 scripts/run_backtest.py --csv data/EURUSD_daily.csv --control 200
 # 4. Lihat pengaruh leverage pada satu strategi
 python3 scripts/run_backtest.py --synthetic 2000 --strategy ma_crossover --leverage-sweep
 
+# 5. Lihat bagaimana mencoba banyak setelan menghasilkan robot palsu
+python3 scripts/demo_overfitting.py
+
+# 6. Uji di luar sampel: setel di data lama, uji di data baru
+python3 scripts/run_backtest.py --synthetic 2500 --walk-forward
+
 # Jalankan tes
 python3 tests/test_forexlab.py
 ```
@@ -101,6 +107,69 @@ keuntungan tersebut.
 **Aturannya satu: strategi dengan nilai p di atas 0,05 tidak boleh diberi
 uang sungguhan.**
 
+## Lubang kedua: overfitting
+
+Uji kendali menjawab "apakah ini kebetulan". Ia tidak menjawab pertanyaan
+kedua yang sama berbahayanya: **apakah saya menemukan strategi ini, atau
+memaksakannya dengan mencoba ratusan setelan sampai ada yang kelihatan bagus?**
+
+```bash
+python3 scripts/demo_overfitting.py
+```
+
+Peraga ini mencoba 99 kombinasi setelan rata-rata bergerak pada data harga
+**acak murni**, yang dipastikan tidak punya pola apa pun.
+
+```
+LIMA SETELAN TERBAIK, cara orang memamerkan robotnya:
+  cepat   lambat    keuntungan   turun terdalam   transaksi
+     40       60        10.4%           14.0%         227
+     40       50         2.5%           17.4%         252
+      8       40         1.7%           20.3%         155
+
+Rata-rata seluruh 99 kombinasi : -8.4%
+Kombinasi yang untung          : 6.1%
+```
+
+Setelan teratas itu akan terlihat meyakinkan di tangkapan layar mana pun.
+Padahal datanya acak, jadi angka itu tidak mengandung informasi apa pun.
+Dari 99 percobaan, selalu ada yang kebetulan bagus.
+
+Obatnya memisahkan data. Setelan dicari pada potongan pertama, lalu diuji
+pada potongan berikutnya yang belum pernah dilihat:
+
+```bash
+python3 scripts/run_backtest.py --csv data/EURUSD_daily.csv --walk-forward
+```
+
+```
+Hasil rata-rata, disetel  : +7.22%
+Hasil rata-rata, diuji    : -1.32%
+Penurunan mutu            : +8.54%
+Hasil berangkai di luar   : -20.72%
+Jendela uji yang untung   : 37.5%
+Kesimpulan                : GAGAL DI LUAR SAMPEL
+```
+
+Selisih 8,54 persen antara "saat disetel" dan "saat diuji" itu bukan
+kelemahan alat. Itu besarnya overfitting yang berhasil diukur.
+
+Ada satu tanda lain yang perlu diperhatikan di rincian per jendela: kalau
+nilai setelan terbaik **berpindah-pindah** setiap kali data baru masuk,
+strategi itu sedang mengejar kebetulan. Setelan yang menangkap sesuatu yang
+nyata cenderung stabil.
+
+## Dua pintu yang harus dilewati
+
+Sebelum sebuah strategi boleh diberi uang sungguhan, keduanya wajib lolos:
+
+| Pintu | Pertanyaan | Alat | Syarat lolos |
+|---|---|---|---|
+| 1 | Apakah hasilnya kebetulan? | `control.py` | nilai p di bawah 0,05 |
+| 2 | Apakah setelannya dipaksakan? | `validation.py` | untung di luar sampel, dan lebih dari separuh jendela untung |
+
+Gagal di salah satunya berarti tidak lolos. Tidak ada nilai tengah di sini.
+
 ## Dari mana data harga
 
 Jaringan di lingkungan ini memblokir penyedia data keuangan, jadi berkas CSV
@@ -124,10 +193,11 @@ sedikit untuk disimpulkan apa pun.
 | `forexlab/risk.py` | Batas risiko yang dikunci di kode, menentukan ukuran posisi |
 | `forexlab/backtest.py` | Mesin backtest, dengan pergeseran eksekusi satu batang |
 | `forexlab/strategies.py` | Strategi dan pembanding wajib |
-| `forexlab/control.py` | Uji permutasi, penentu ada atau tidaknya keunggulan |
+| `forexlab/control.py` | Uji permutasi, pintu pertama |
+| `forexlab/validation.py` | Uji di luar sampel dan deteksi overfitting, pintu kedua |
 | `forexlab/metrics.py` | Penurunan terdalam, harapan keuntungan, Sharpe |
 | `forexlab/data.py` | Pembaca CSV dan pembuat data acak |
-| `tests/` | 23 tes, termasuk dua yang memaku jarak eksekusi tepat satu batang |
+| `tests/` | 33 tes, termasuk dua yang memaku jarak eksekusi tepat satu batang |
 
 ## Batas kemampuan alat ini
 

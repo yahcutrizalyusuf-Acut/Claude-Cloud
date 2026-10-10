@@ -28,7 +28,8 @@ from forexlab.broker import BrokerConfig
 from forexlab.control import permutation_test
 from forexlab.data import load_csv, synthetic_gbm
 from forexlab.risk import RiskLimits
-from forexlab.strategies import REGISTRY
+from forexlab.strategies import REGISTRY, moving_average_crossover
+from forexlab.validation import walk_forward_test
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -66,6 +67,17 @@ def build_parser() -> argparse.ArgumentParser:
         default=0,
         metavar="N",
         help="Jalankan uji kendali dengan N percobaan acak. 200 adalah angka yang layak.",
+    )
+    parser.add_argument(
+        "--walk-forward",
+        action="store_true",
+        help="Setel di data lama lalu uji di data baru. Hanya untuk ma_crossover.",
+    )
+    parser.add_argument(
+        "--train-bars", type=int, default=500, help="Panjang potongan untuk menyetel"
+    )
+    parser.add_argument(
+        "--test-bars", type=int, default=125, help="Panjang potongan untuk menguji"
     )
     parser.add_argument(
         "--leverage-sweep",
@@ -124,6 +136,32 @@ def main() -> int:
     print(f"Leverage    : 1:{args.leverage}   spread {args.spread_pips} pip   "
           f"risiko {args.risk_per_trade:.1%} per transaksi")
     print()
+
+    if args.walk_forward:
+        grid = {
+            "fast": [3, 5, 8, 10, 13, 15, 20, 25, 30, 40],
+            "slow": [40, 50, 60, 80, 100, 120, 150, 180, 200, 250],
+        }
+        laporan = walk_forward_test(
+            prices,
+            lambda fast, slow: (
+                lambda p: moving_average_crossover(p, fast=fast, slow=slow)
+            ),
+            grid,
+            make_config(args),
+            train_bars=args.train_bars,
+            test_bars=args.test_bars,
+            strategy_name="ma_crossover",
+        )
+        print("UJI DI LUAR SAMPEL")
+        print("-" * 78)
+        print(laporan.report_text())
+        print("-" * 78)
+        print()
+        print("Hanya baris 'Hasil berangkai di luar' yang berarti. Baris")
+        print("'Hasil rata-rata, disetel' selalu bagus dan harus diabaikan.")
+        print()
+        return 0
 
     if args.leverage_sweep:
         if not args.strategy:

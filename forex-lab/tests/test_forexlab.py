@@ -20,6 +20,12 @@ from forexlab.data import block_bootstrap_returns, log_returns, shuffle_returns,
 from forexlab.metrics import max_drawdown, sharpe_ratio
 from forexlab.risk import RiskLimits, position_size
 from forexlab.strategies import REGISTRY, moving_average_crossover
+from forexlab.validation import (
+    expand_grid,
+    parameter_sweep,
+    walk_forward_test,
+    walk_forward_windows,
+)
 
 
 # --- spread selalu merugikan pedagang ------------------------------------
@@ -286,6 +292,129 @@ def test_sharpe_aman_untuk_masukan_aneh():
     assert sharpe_ratio(np.array([100.0])) == 0.0
     assert sharpe_ratio(np.array([100.0, 100.0, 100.0])) == 0.0
     assert np.isfinite(sharpe_ratio(np.array([100.0, 0.0, 50.0, 60.0])))
+
+
+# --- uji di luar sampel ---------------------------------------------------
+
+def _pabrik_ma(fast: int, slow: int):
+    return lambda prices: moving_average_crossover(prices, fast=fast, slow=slow)
+
+
+def test_jendela_uji_tidak_tumpang_tindih():
+    """Potongan uji harus benar-benar terpisah, atau hasilnya dihitung ganda."""
+    windows = walk_forward_windows(2000, train_bars=500, test_bars=125)
+    for lebih_awal, berikutnya in zip(windows, windows[1:]):
+        assert lebih_awal.test_end <= berikutnya.test_start
+
+
+def test_potongan_uji_selalu_sesudah_potongan_setel():
+    """Menguji pada data yang dipakai menyetel akan membuat hasilnya bohong."""
+    for window in walk_forward_windows(1500, train_bars=400, test_bars=100):
+        assert window.test_start >= window.train_end
+        assert window.train_start < window.train_end
+
+
+def test_data_terlalu_pendek_ditolak():
+    try:
+        walk_forward_windows(300, train_bars=500, test_bars=125)
+    except ValueError:
+        return
+    raise AssertionError("data yang terlalu pendek seharusnya ditolak")
+
+
+def test_jendela_terlalu_kecil_ditolak():
+    for kwargs in ({"train_bars": 10, "test_bars": 100}, {"train_bars": 500, "test_bars": 5}):
+        try:
+            walk_forward_windows(2000, **kwargs)
+        except ValueError:
+            continue
+        raise AssertionError(f"{kwargs} seharusnya ditolak")
+
+
+def test_kombinasi_setelan_tidak_masuk_akal_dibuang():
+    """Rata-rata cepat tidak boleh lebih panjang dari rata-rata lambat."""
+    prices = synthetic_gbm(400, seed=31)
+    tabel = parameter_sweep(
+        prices, _pabrik_ma, {"fast": [10, 60], "slow": [50]}, BacktestConfig()
+    )
+    assert (tabel["fast"] < tabel["slow"]).all()
+    assert len(tabel) == 1
+
+
+def test_sapuan_setelan_menemukan_pemenang_di_data_acak():
+    """Pada data acak, mencoba banyak setelan tetap memunculkan yang 'bagus'.
+
+    Inilah inti masalah overfitting. Tes ini memastikan peraganya memang
+    memperlihatkan hal itu, bukan kebetulan sekali jalan.
+    """
+    prices = synthetic_gbm(1200, seed=77)
+    tabel = parameter_sweep(
+        prices,
+        _pabrik_ma,
+        {"fast": [5, 10, 20, 30], "slow": [50, 100, 150, 200]},
+        BacktestConfig(broker=BrokerConfig(leverage=100)),
+    )
+    assert len(tabel) >= 10
+    # Hasil terbaik harus jauh lebih tinggi dari rata-rata, murni dari seleksi.
+    assert tabel["total_return"].iloc[0] > tabel["total_return"].mean()
+    assert tabel["total_return"].is_monotonic_decreasing
+
+
+def test_mutu_menurun_di_luar_sampel_pada_data_acak():
+    """Pada data acak, hasil saat disetel harus lebih baik dari saat diuji.
+
+    Selisih itu bukan kelemahan alat, melainkan besarnya overfitting yang
+    berhasil diukur. Kalau selisihnya nol pada data acak, berarti ada yang
+    salah pada pemisahan datanya.
+    """
+    prices = synthetic_gbm(2000, seed=99)
+    laporan = walk_forward_test(
+        prices,
+        _pabrik_ma,
+        {"fast": [5, 10, 20, 30], "slow": [50, 100, 150, 200]},
+        BacktestConfig(broker=BrokerConfig(leverage=100)),
+        train_bars=500,
+        test_bars=125,
+        strategy_name="ma",
+    )
+    assert laporan.windows >= 5
+    assert laporan.in_sample_mean > laporan.out_of_sample_mean
+    assert laporan.degradation > 0
+
+
+def test_tidak_ada_strategi_lolos_di_data_acak():
+    """Alat ini tidak boleh menyatakan strategi lolos pada data tanpa pola."""
+    prices = synthetic_gbm(1800, seed=123)
+    laporan = walk_forward_test(
+        prices,
+        _pabrik_ma,
+        {"fast": [5, 15, 30], "slow": [60, 120, 200]},
+        BacktestConfig(broker=BrokerConfig(leverage=100)),
+        train_bars=500,
+        test_bars=125,
+    )
+    assert not laporan.survives, (
+        f"alat menyatakan lolos di data acak: {laporan.out_of_sample_compound:+.2%}, "
+        f"menang {laporan.out_of_sample_win_rate:.0%}"
+    )
+
+
+def test_rincian_jendela_lengkap():
+    prices = synthetic_gbm(1400, seed=55)
+    laporan = walk_forward_test(
+        prices, _pabrik_ma, {"fast": [10], "slow": [50]},
+        BacktestConfig(), train_bars=500, test_bars=125,
+    )
+    assert len(laporan.detail) == laporan.windows
+    assert len(laporan.best_params_per_window) == laporan.windows
+    assert laporan.combinations_tried == 1
+    # Dengan satu kombinasi, tidak ada yang bisa dipilih, jadi tidak ada seleksi.
+    assert set(laporan.detail["best_fast"]) == {10}
+
+
+def test_expand_grid_kosong():
+    assert expand_grid({}) == [{}]
+    assert len(expand_grid({"a": [1, 2], "b": [3, 4, 5]})) == 6
 
 
 def _jalankan_semua() -> int:

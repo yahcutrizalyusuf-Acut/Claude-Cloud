@@ -14,6 +14,11 @@ from .control import ControlReport, permutation_test
 from .data import load_csv, synthetic_gbm
 from .metrics import Result
 from .risk import RiskLimits
+from .validation import (
+    WalkForwardReport,
+    parameter_sweep,
+    walk_forward_test,
+)
 
 __all__ = [
     "BacktestConfig",
@@ -22,8 +27,11 @@ __all__ = [
     "Result",
     "RiskLimits",
     "SimulatedBroker",
+    "WalkForwardReport",
     "load_csv",
+    "parameter_sweep",
     "permutation_test",
     "run_backtest",
     "synthetic_gbm",
+    "walk_forward_test",
 ]
