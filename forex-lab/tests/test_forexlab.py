@@ -825,6 +825,25 @@ def test_penyesuaian_tanpa_dugaan_tidak_mengubah_apa_pun():
     assert sesuaikan_pemecahan(frame, []).equals(frame)
 
 
+# --- pengunduh data -------------------------------------------------------
+
+def test_kode_saham_indonesia_diberi_akhiran_bursa():
+    """Kode Indonesia butuh akhiran .JK, kode asing tidak boleh diubah."""
+    import importlib.util
+
+    jalur = Path(__file__).resolve().parents[1] / "scripts" / "unduh_data.py"
+    spec = importlib.util.spec_from_file_location("unduh_data", jalur)
+    modul = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modul)
+
+    assert modul.kode_lengkap("BBCA") == "BBCA.JK"
+    assert modul.kode_lengkap("bbri") == "BBRI.JK"
+    assert modul.kode_lengkap(" tlkm ") == "TLKM.JK"
+    assert modul.kode_lengkap("BBCA.JK") == "BBCA.JK"
+    assert modul.kode_lengkap("EURUSD=X") == "EURUSD=X"
+    assert modul.kode_lengkap("^JKSE") == "^JKSE.JK"
+
+
 def _jalankan_semua() -> int:
     gagal = 0
     tes = [(n, f) for n, f in sorted(globals().items())
