@@ -106,7 +106,9 @@ def _ordered_strategies() -> list[str]:
 
 def load_prices(args: argparse.Namespace):
     if args.csv:
-        return load_csv(args.csv), Path(args.csv).name
+        # market penting: pada berkas berisi "7.400", saham Indonesia berarti
+        # Rp 7.400 sementara forex berarti 7,4.
+        return load_csv(args.csv, market=args.market), Path(args.csv).name
 
     # Harga awal dan gejolaknya harus cocok dengan pasarnya. Memakai harga
     # forex 1,10 untuk pasar saham membuat fraksi harga Rp 1 setara 91 persen

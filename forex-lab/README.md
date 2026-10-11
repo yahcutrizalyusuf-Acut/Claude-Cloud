@@ -159,6 +159,58 @@ nilai setelan terbaik **berpindah-pindah** setiap kali data baru masuk,
 strategi itu sedang mengejar kebetulan. Setelan yang menangkap sesuatu yang
 nyata cenderung stabil.
 
+## Langkah nol: periksa datanya dulu
+
+Backtest paling teliti pun tidak berguna kalau datanya cacat, dan data harga
+saham Indonesia yang diunduh dari berbagai tempat sering cacat dengan cara
+yang tidak kelihatan.
+
+```bash
+python3 scripts/periksa_data.py data/BBCA.csv --market idx
+```
+
+Cacat yang paling berbahaya adalah **pemecahan saham yang belum
+disesuaikan**. Ketika satu lembar saham dipecah menjadi lima, harganya turun
+menjadi seperlima dalam satu malam, padahal nilai kepemilikan pemegang saham
+tidak berubah sama sekali. Kalau data belum disesuaikan, backtest membaca itu
+sebagai kejatuhan 80 persen yang tidak pernah terjadi. BBCA pernah mengalami
+pemecahan saham.
+
+Pemeriksa menemukannya secara otomatis, karena pemecahan meninggalkan jejak
+khas: harga berubah mendekati pecahan bulat dalam satu malam, sesuatu yang
+tidak pernah terjadi pada pergerakan pasar biasa.
+
+```
+Dugaan pemecahan    : 1  <-- MASALAH SERIUS
+    2021-09-08: harga 30,000 menjadi 6,130, rasio 1:5 (pemecahan saham)
+
+Kesimpulan          : DATA BELUM LAYAK DIPAKAI
+```
+
+Yang juga diperiksa: harga nol atau negatif, tanggal ganda, urutan tanggal
+terbalik, jumlah hari bursa per tahun yang tidak wajar, dan lompatan harga di
+luar batas auto reject bursa.
+
+**Pemeriksa tidak pernah memperbaiki data secara diam-diam.** Cacatnya
+dilaporkan, dan keputusan memperbaikinya diserahkan kepada Anda, karena
+memperbaiki diam-diam adalah cara lain backtest berbohong.
+
+### Berkas dari mana pun bisa dibaca
+
+Nama kolom bahasa Indonesia maupun Inggris dikenali, begitu juga angka
+berformat apa pun:
+
+| Sumber | Bentuk angka | Terbaca sebagai |
+|---|---|---|
+| Gaya Indonesia | `7.350` | 7.350 |
+| investing.com | `"9,875"` | 9.875 |
+| Yahoo Finance | `7375` | 7.375 |
+| Volume investing.com | `45.2M` | 45.200.000 |
+
+Sebutkan `--market idx` atau `--market forex`. Ini penting karena `7.400`
+berarti Rp 7.400 pada saham Indonesia tetapi 7,4 pada pasangan mata uang,
+dan susunan keduanya identik.
+
 ## Saham Indonesia
 
 Pasar yang jadi fokus utama. Mekanika biayanya sangat berbeda dari forex,
@@ -185,6 +237,7 @@ strategi yang sering bertransaksi, selisih kecil di sini menentukan untung
 atau rugi.
 
 ```bash
+python3 scripts/periksa_data.py data/BBCA.csv --market idx
 python3 scripts/demo_biaya_saham.py
 python3 scripts/run_backtest.py --market idx --balance 10000000 \
     --risk-per-trade 0.02 --csv data/BBCA.csv
@@ -259,8 +312,9 @@ sedikit untuk disimpulkan apa pun.
 | `forexlab/control.py` | Uji permutasi, pintu pertama |
 | `forexlab/validation.py` | Uji di luar sampel dan deteksi overfitting, pintu kedua |
 | `forexlab/metrics.py` | Penurunan terdalam, harapan keuntungan, Sharpe |
-| `forexlab/data.py` | Pembaca CSV dan pembuat data acak |
-| `tests/` | 49 tes, termasuk dua yang memaku jarak eksekusi tepat satu batang dan satu yang menjaga keadilan pembanding |
+| `forexlab/data.py` | Pembaca CSV dari berbagai penyedia, dan pembuat data acak |
+| `forexlab/quality.py` | Pemeriksa mutu data dan pendeteksi pemecahan saham |
+| `tests/` | 67 tes, termasuk dua yang memaku jarak eksekusi tepat satu batang dan satu yang menjaga keadilan pembanding |
 
 ## Batas kemampuan alat ini
 

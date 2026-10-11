@@ -22,7 +22,16 @@ from forexlab.broker import (
     idx_tick_size,
 )
 from forexlab.control import permutation_test
-from forexlab.data import block_bootstrap_returns, log_returns, shuffle_returns, synthetic_gbm
+from forexlab.data import (
+    bersihkan_angka,
+    bersihkan_kolom,
+    block_bootstrap_returns,
+    load_csv,
+    log_returns,
+    shuffle_returns,
+    synthetic_gbm,
+)
+from forexlab.quality import deteksi_pemecahan, periksa, sesuaikan_pemecahan
 from forexlab.metrics import max_drawdown, sharpe_ratio
 from forexlab.risk import RiskLimits, position_size
 from forexlab.strategies import REGISTRY, moving_average_crossover
@@ -637,6 +646,183 @@ def test_stop_loss_menambah_jumlah_transaksi_dan_biaya():
     tanpa, _ = run_backtest(prices, signals, benchmark_config(base), "tanpa_stop")
     assert dengan.trades > tanpa.trades
     assert dengan.total_costs > tanpa.total_costs
+
+
+# --- membaca berkas dari berbagai penyedia data ---------------------------
+
+def _tulis(nama: str, isi: str) -> str:
+    import tempfile
+
+    folder = Path(tempfile.mkdtemp())
+    berkas = folder / nama
+    berkas.write_text(isi)
+    return str(berkas)
+
+
+def test_angka_pemisah_ribuan_koma():
+    assert bersihkan_angka("7,350") == 7350.0
+    assert bersihkan_angka("1,234.56") == 1234.56
+    assert bersihkan_angka("26,000") == 26_000.0
+
+
+def test_angka_akhiran_ribuan():
+    assert bersihkan_angka("12.5M") == 12_500_000.0
+    assert bersihkan_angka("45K") == 45_000.0
+
+
+def test_angka_tidak_terbaca_menjadi_nan():
+    for nilai in ("-", "", "n/a", "abc", None):
+        assert np.isnan(bersihkan_angka(nilai))
+
+
+def test_petunjuk_pasar_tidak_merusak_angka_desimal():
+    """Petunjuk pasar hanya menengahi susunan yang memang bisa dibaca dua cara.
+
+    Ini tes pelindung untuk bug nyata. Memaksa titik sebagai pemisah ribuan
+    untuk pasar saham sempat mengubah "5306.2" menjadi 53062, sepuluh kali
+    lipat dari seharusnya, sehingga seluruh ukuran posisi jadi nol dan tidak
+    ada satu pun transaksi terjadi.
+    """
+    assert bersihkan_angka("5306.2", titik_ribuan=True) == 5306.2
+    assert bersihkan_angka("0.25", titik_ribuan=True) == 0.25
+    assert bersihkan_angka("7.400", titik_ribuan=True) == 7_400.0
+    assert bersihkan_angka("1.234.567", titik_ribuan=True) == 1_234_567.0
+
+
+def test_petunjuk_forex_menjaga_titik_sebagai_desimal():
+    assert bersihkan_angka("1.105", titik_ribuan=False) == 1.105
+    assert bersihkan_angka("1.10523", titik_ribuan=False) == 1.10523
+
+
+def test_kolom_memutuskan_konvensi_sekali_untuk_semua():
+    """Satu nilai tidak cukup; seluruh kolom hampir selalu cukup."""
+    gaya_forex = bersihkan_kolom(pd.Series(["1.1050", "1.1123", "1.0987"]))
+    assert gaya_forex.max() < 2.0
+    gaya_saham = bersihkan_kolom(pd.Series(["7.350", "26.000", "1.234.567"]))
+    assert gaya_saham.min() >= 7_000.0
+
+
+def test_baca_berkas_gaya_indonesia():
+    path = _tulis(
+        "idx.csv",
+        "Tanggal,Penutupan,Tertinggi,Terendah,Volume\n"
+        "01/09/2026,7.350,7.400,7.300,45200000\n"
+        "02/09/2026,7.400,7.450,7.325,38100000\n",
+    )
+    frame = load_csv(path, market="idx")
+    assert list(frame.columns) == ["high", "low", "close", "volume"]
+    assert float(frame["close"].iloc[0]) == 7_350.0
+    assert frame.index[0] < frame.index[1]
+
+
+def test_baca_berkas_gaya_investing():
+    path = _tulis(
+        "investing.csv",
+        'Tanggal,Terakhir,Pembukaan,Tertinggi,Terendah,Vol.,Perubahan%\n'
+        '10/10/2026,"9,875","9,800","9,900","9,775","45.2M","0.76%"\n'
+        '09/10/2026,"9,800","9,850","9,875","9,775","38.1M","-0.51%"\n',
+    )
+    frame = load_csv(path, market="idx")
+    assert float(frame["close"].iloc[-1]) == 9_875.0
+    assert float(frame["volume"].iloc[-1]) == 45_200_000.0
+
+
+def test_tanggal_iso_tidak_dibalik():
+    """Tanggal 2026-09-01 adalah 1 September, bukan 9 Januari.
+
+    Tes pelindung untuk bug nyata: dayfirst=True membalik bulan dan hari pada
+    berkas gaya Yahoo Finance, sehingga urutan waktunya jadi kacau.
+    """
+    path = _tulis(
+        "yahoo.csv",
+        "Date,Open,High,Low,Close,Adj Close,Volume\n"
+        "2026-09-01,7350,7400,7300,7375,7375,45200000\n"
+        "2026-09-02,7375,7450,7325,7400,7400,38100000\n",
+    )
+    frame = load_csv(path, market="idx")
+    assert frame.index[0].month == 9
+    assert frame.index[0].day == 1
+
+
+def test_berkas_tanpa_kolom_harga_ditolak():
+    path = _tulis("tanpa_harga.csv", "Tanggal,Volume\n01/09/2026,100\n")
+    try:
+        load_csv(path, market="idx")
+    except ValueError:
+        return
+    raise AssertionError("berkas tanpa kolom harga penutupan seharusnya ditolak")
+
+
+def test_pasar_tidak_dikenal_di_load_csv_ditolak():
+    path = _tulis("x.csv", "Tanggal,Penutupan\n01/09/2026,7.350\n")
+    try:
+        load_csv(path, market="nasdaq")
+    except ValueError:
+        return
+    raise AssertionError("market yang tidak dikenal seharusnya ditolak")
+
+
+# --- pemeriksaan mutu data ------------------------------------------------
+
+def _seri_dengan_pemecahan(rasio: float, pada: int = 700, baris: int = 1_200):
+    index = pd.date_range("2019-01-02", periods=baris, freq="B")
+    harga = np.linspace(26_000.0, 36_000.0, baris)
+    harga[pada:] /= rasio
+    return pd.DataFrame({"close": harga}, index=index)
+
+
+def test_pemecahan_saham_terdeteksi():
+    """Pemecahan yang belum disesuaikan harus ditemukan, apa pun rasionya."""
+    for rasio in (2.0, 5.0, 10.0):
+        frame = _seri_dengan_pemecahan(rasio)
+        dugaan = deteksi_pemecahan(frame)
+        assert len(dugaan) == 1, f"rasio {rasio} tidak terdeteksi"
+        assert np.isclose(dugaan[0].rasio_terdekat, rasio)
+
+
+def test_data_bersih_tidak_dituduh_pemecahan():
+    """Pergerakan pasar biasa tidak boleh dikira pemecahan saham."""
+    frame = synthetic_gbm(1_500, start_price=7_000.0, daily_volatility=0.02, seed=88)
+    assert deteksi_pemecahan(frame) == []
+
+
+def test_penyesuaian_pemecahan_menyatukan_skala_harga():
+    frame = _seri_dengan_pemecahan(5.0)
+    laporan = periksa(frame)
+    assert not laporan.layak_pakai
+    rapi = sesuaikan_pemecahan(frame, laporan.dugaan_pemecahan)
+    assert deteksi_pemecahan(rapi) == []
+    # Harga lama kini sebanding dengan harga terbaru, bukan lima kali lipat.
+    assert float(rapi["close"].iloc[0]) < float(rapi["close"].iloc[-1]) * 1.5
+
+
+def test_harga_nol_ditandai_tidak_sah():
+    index = pd.date_range("2020-01-01", periods=100, freq="B")
+    harga = np.full(100, 5_000.0)
+    harga[50] = 0.0
+    laporan = periksa(pd.DataFrame({"close": harga}, index=index))
+    assert laporan.harga_tidak_sah == 1
+    assert not laporan.layak_pakai
+
+
+def test_data_terlalu_pendek_ditandai():
+    frame = synthetic_gbm(100, start_price=5_000.0, seed=4)
+    laporan = periksa(frame)
+    assert laporan.tahun_data < 2.0
+    assert not laporan.layak_pakai
+
+
+def test_data_bagus_dinyatakan_layak():
+    frame = synthetic_gbm(
+        1_000, start_price=7_000.0, daily_volatility=0.015, seed=7, freq="B"
+    )
+    laporan = periksa(frame)
+    assert laporan.layak_pakai, laporan.laporan_teks()
+
+
+def test_penyesuaian_tanpa_dugaan_tidak_mengubah_apa_pun():
+    frame = synthetic_gbm(500, start_price=5_000.0, seed=11)
+    assert sesuaikan_pemecahan(frame, []).equals(frame)
 
 
 def _jalankan_semua() -> int:
