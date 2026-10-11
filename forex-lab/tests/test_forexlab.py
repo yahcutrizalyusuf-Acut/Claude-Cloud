@@ -840,8 +840,10 @@ def test_kode_saham_indonesia_diberi_akhiran_bursa():
     assert modul.kode_lengkap("bbri") == "BBRI.JK"
     assert modul.kode_lengkap(" tlkm ") == "TLKM.JK"
     assert modul.kode_lengkap("BBCA.JK") == "BBCA.JK"
+    # Bukan saham Indonesia, jadi tidak boleh diberi akhiran bursa.
     assert modul.kode_lengkap("EURUSD=X") == "EURUSD=X"
-    assert modul.kode_lengkap("^JKSE") == "^JKSE.JK"
+    assert modul.kode_lengkap("^JKSE") == "^JKSE"
+    assert modul.kode_lengkap("AAPL.US") == "AAPL.US"
 
 
 def _jalankan_semua() -> int:

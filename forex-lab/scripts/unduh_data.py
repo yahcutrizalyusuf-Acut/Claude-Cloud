@@ -39,9 +39,23 @@ BATAS_WAKTU_DETIK = 30
 
 
 def kode_lengkap(kode: str) -> str:
-    """Lengkapi kode saham Indonesia dengan akhiran bursanya."""
+    """Lengkapi kode saham Indonesia dengan akhiran bursanya.
+
+    Kode saham di Bursa Efek Indonesia selalu empat huruf, seperti BBCA dan
+    TLKM, sehingga hanya bentuk itu yang diberi akhiran .JK. Kode lain
+    dibiarkan apa adanya, karena EURUSD=X dan ^JKSE bukan saham Indonesia dan
+    akan rusak kalau diberi akhiran.
+
+    Satu kasus memang ikut terkena: saham asing yang kodenya juga empat
+    huruf, misalnya AAPL, akan menjadi AAPL.JK. Untuk kode seperti itu,
+    tulis akhiran bursanya sendiri, misalnya AAPL.US.
+    """
     kode = kode.strip().upper()
-    return kode if "." in kode else f"{kode}.JK"
+    if "." in kode:
+        return kode
+    if len(kode) == 4 and kode.isascii() and kode.isalpha():
+        return f"{kode}.JK"
+    return kode
 
 
 def unduh(kode: str, tahun: int = 10) -> pd.DataFrame:
