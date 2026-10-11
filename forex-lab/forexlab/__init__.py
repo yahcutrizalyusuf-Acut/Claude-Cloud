@@ -8,8 +8,8 @@ backtestnya.
 
 __version__ = "0.1.0"
 
-from .backtest import BacktestConfig, run_backtest
-from .broker import BrokerConfig, SimulatedBroker
+from .backtest import BacktestConfig, benchmark_config, run_backtest
+from .broker import IDX_BROKER, BrokerConfig, SimulatedBroker
 from .control import ControlReport, permutation_test
 from .data import load_csv, synthetic_gbm
 from .metrics import Result
@@ -22,12 +22,14 @@ from .validation import (
 
 __all__ = [
     "BacktestConfig",
+    "IDX_BROKER",
     "BrokerConfig",
     "ControlReport",
     "Result",
     "RiskLimits",
     "SimulatedBroker",
     "WalkForwardReport",
+    "benchmark_config",
     "load_csv",
     "parameter_sweep",
     "permutation_test",

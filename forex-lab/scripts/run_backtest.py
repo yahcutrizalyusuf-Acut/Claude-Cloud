@@ -23,8 +23,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from forexlab.backtest import BacktestConfig, run_backtest
-from forexlab.broker import BrokerConfig
+from forexlab.backtest import BacktestConfig, benchmark_config, run_backtest
+from forexlab.broker import IDX_BROKER, BrokerConfig
 from forexlab.control import permutation_test
 from forexlab.data import load_csv, synthetic_gbm
 from forexlab.risk import RiskLimits
@@ -51,6 +51,13 @@ def build_parser() -> argparse.ArgumentParser:
         "--strategy",
         choices=sorted(REGISTRY),
         help="Satu strategi saja. Bila tidak disebut, semua strategi dijalankan.",
+    )
+    parser.add_argument(
+        "--market",
+        choices=("forex", "idx"),
+        default="forex",
+        help="Pasar yang disimulasikan. 'idx' memakai biaya saham Indonesia, "
+        "satu lot 100 lembar, tanpa leverage, dan hanya beli.",
     )
     parser.add_argument("--balance", type=float, default=1_000_000.0, help="Modal awal")
     parser.add_argument("--leverage", type=int, default=100, help="Leverage broker")
@@ -99,8 +106,19 @@ def _ordered_strategies() -> list[str]:
 
 def load_prices(args: argparse.Namespace):
     if args.csv:
-        prices = load_csv(args.csv)
-        label = Path(args.csv).name
+        return load_csv(args.csv), Path(args.csv).name
+
+    # Harga awal dan gejolaknya harus cocok dengan pasarnya. Memakai harga
+    # forex 1,10 untuk pasar saham membuat fraksi harga Rp 1 setara 91 persen
+    # dari harga sahamnya, dan seluruh hasil jadi tidak berarti.
+    if args.market == "idx":
+        prices = synthetic_gbm(
+            args.synthetic,
+            start_price=3_500.0,
+            daily_volatility=0.018,
+            seed=args.seed,
+        )
+        label = f"saham acak Rp 3.500 ({args.synthetic} batang)"
     else:
         prices = synthetic_gbm(args.synthetic, seed=args.seed)
         label = f"data acak ({args.synthetic} batang)"
@@ -108,6 +126,17 @@ def load_prices(args: argparse.Namespace):
 
 
 def make_config(args: argparse.Namespace, leverage: int | None = None) -> BacktestConfig:
+    if args.market == "idx":
+        # Saham Indonesia: tanpa leverage, lot utuh 100 lembar, hanya beli.
+        # Jual kosong tidak tersedia bagi pemodal biasa di bursa Indonesia.
+        return BacktestConfig(
+            starting_balance=args.balance,
+            broker=IDX_BROKER,
+            limits=RiskLimits(
+                risk_per_trade=args.risk_per_trade, max_effective_leverage=1.0
+            ),
+            long_only=True,
+        )
     return BacktestConfig(
         starting_balance=args.balance,
         broker=BrokerConfig(
@@ -133,8 +162,14 @@ def main() -> int:
     print(f"Rentang     : {prices.index[0].date()} sampai {prices.index[-1].date()} "
           f"({len(prices)} batang)")
     print(f"Modal awal  : {args.balance:,.0f}")
-    print(f"Leverage    : 1:{args.leverage}   spread {args.spread_pips} pip   "
-          f"risiko {args.risk_per_trade:.1%} per transaksi")
+    if args.market == "idx":
+        print(f"Pasar       : saham Indonesia, tanpa leverage, satu lot 100 lembar")
+        print(f"Biaya       : 0,15% beli dan 0,25% jual, ditambah selisih "
+              f"satu fraksi harga")
+        print(f"Risiko      : {args.risk_per_trade:.1%} per transaksi, hanya beli")
+    else:
+        print(f"Leverage    : 1:{args.leverage}   spread {args.spread_pips} pip   "
+              f"risiko {args.risk_per_trade:.1%} per transaksi")
     print()
 
     if args.walk_forward:
@@ -163,6 +198,11 @@ def main() -> int:
         print()
         return 0
 
+    if args.leverage_sweep and args.market == "idx":
+        print("--leverage-sweep tidak berlaku untuk saham Indonesia, "
+              "karena pemodal biasa tidak memakai leverage.", file=sys.stderr)
+        return 2
+
     if args.leverage_sweep:
         if not args.strategy:
             print("--leverage-sweep butuh --strategy", file=sys.stderr)
@@ -188,8 +228,13 @@ def main() -> int:
 
     print("HASIL BACKTEST")
     print("-" * 78)
+    base = make_config(args)
     for name in chosen:
-        result, _ = run_backtest(prices, REGISTRY[name](prices), make_config(args), name)
+        # always_long adalah beli lalu tahan, jadi batas penurunan dan stop
+        # loss tidak berlaku padanya. Tanpa pengecualian ini, pembandingnya
+        # lumpuh dan setiap strategi aktif terlihat lebih baik dari kenyataan.
+        config = benchmark_config(base) if name == "always_long" else base
+        result, _ = run_backtest(prices, REGISTRY[name](prices), config, name)
         print(result.summary_line())
     print("-" * 78)
     print()

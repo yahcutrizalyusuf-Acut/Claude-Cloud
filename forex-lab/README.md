@@ -1,7 +1,7 @@
 # forex-lab
 
-Alat untuk menguji apakah sebuah strategi forex punya keunggulan nyata, atau
-cuma kebetulan. Dibuat untuk dijalankan **sebelum** uang sungguhan terlibat.
+Alat untuk menguji apakah sebuah strategi punya keunggulan nyata, atau cuma
+kebetulan. Mendukung dua pasar: **saham Indonesia** dan **forex**. Dibuat untuk dijalankan **sebelum** uang sungguhan terlibat.
 
 Paket ini sengaja tidak bisa menghubungkan diri ke broker dan tidak bisa
 mengirim order. Yang bisa dilakukannya hanya satu: menguji dengan jujur.
@@ -159,6 +159,69 @@ nilai setelan terbaik **berpindah-pindah** setiap kali data baru masuk,
 strategi itu sedang mengejar kebetulan. Setelan yang menangkap sesuatu yang
 nyata cenderung stabil.
 
+## Saham Indonesia
+
+Pasar yang jadi fokus utama. Mekanika biayanya sangat berbeda dari forex,
+dan perbedaan itu dimodelkan:
+
+| Hal | Saham Indonesia | Forex |
+|---|---|---|
+| Satu lot | 100 lembar, tidak ada pecahan lot | 100.000 unit, pecahan 0,01 lot |
+| Leverage | Tidak ada bagi pemodal biasa | 1:100 sampai 1:500 |
+| Biaya | 0,15% saat beli, 0,25% saat jual | Spread dalam pip |
+| Selisih beli-jual | Satu fraksi harga, berubah menurut harga saham | Tetap dalam pip |
+| Biaya menginap | Tidak ada | Ada |
+| Penutupan paksa | Tidak ada tanpa leverage | Stop out oleh broker |
+| Jual kosong | Tidak tersedia bagi pemodal biasa | Bebas |
+
+Tarif 0,15% dan 0,25% itu sudah memuat komisi sekuritas, biaya bursa, biaya
+kliring, pajak pertambahan nilai atas komisi, dan pajak penghasilan final
+0,1% yang hanya dikenakan saat menjual. Satu putaran beli lalu jual menelan
+sekitar 0,4%.
+
+**Tarif ini berbeda antar sekuritas, kadang cukup jauh.** Periksa tarif
+sekuritas Anda sendiri dan ganti angkanya di `IDX_BROKER`, karena pada
+strategi yang sering bertransaksi, selisih kecil di sini menentukan untung
+atau rugi.
+
+```bash
+python3 scripts/demo_biaya_saham.py
+python3 scripts/run_backtest.py --market idx --balance 10000000 \
+    --risk-per-trade 0.02 --csv data/BBCA.csv
+```
+
+### Berapa harga sebenarnya dari "beli murah, jual cepat saat naik"
+
+Pada saham sintetis Rp 3.500 yang naik 84% selama sekitar sepuluh tahun:
+
+| Strategi | Hasil | Transaksi | Biaya terhadap modal |
+|---|---|---|---|
+| beli lalu tahan | +86,1% | 0 | 0,1% |
+| beli lalu tahan + stop loss | -14,8% | 31 | 8,2% |
+| rata-rata bergerak 20/50 | +1,4% | 130 | 22,0% |
+| rata-rata cepat 3/10 | -16,1% | 60 | 10,5% |
+| lemparan koin | -16,9% | 80 | 13,3% |
+
+Kolom paling kanan yang menjelaskan segalanya. Makin sering bertransaksi,
+makin besar bagian modal yang berpindah ke biaya, dan itu terjadi tanpa
+memandang benar atau salah tebakannya.
+
+Biaya satu putaran 0,69% terdengar kecil. Dikalikan 250 hari bursa, biayanya
+menjadi 171% modal dalam setahun. Harapan keuntungan pasar saham jangka
+panjang hanya 8 sampai 12 persen setahun.
+
+### Satu kehalusan yang mudah terlewat
+
+Pembanding beli lalu tahan dijalankan **tanpa stop loss dan tanpa batas
+penurunan**, lewat `benchmark_config()`. Itu memang definisi beli lalu tahan:
+menahan penurunan sampai pasar pulih.
+
+Ini pernah salah di alat ini, dan akibatnya besar. Batas penurunan 20% di
+manajemen risiko ikut menghentikan pembandingnya, sehingga pada saham yang
+naik 84% pembandingnya hanya mencatat +2,1%. Setiap strategi aktif jadi
+terlihat jauh lebih baik daripada kenyataannya. Sekarang ada tes yang
+menjaga agar cacat itu tidak kembali.
+
 ## Dua pintu yang harus dilewati
 
 Sebelum sebuah strategi boleh diberi uang sungguhan, keduanya wajib lolos:
@@ -189,7 +252,7 @@ sedikit untuk disimpulkan apa pun.
 
 | Berkas | Isi |
 |---|---|
-| `forexlab/broker.py` | Simulasi broker: spread, margin, margin call, stop out, swap |
+| `forexlab/broker.py` | Simulasi broker dua pasar: biaya saham Indonesia, dan spread, margin, margin call, stop out, swap untuk forex |
 | `forexlab/risk.py` | Batas risiko yang dikunci di kode, menentukan ukuran posisi |
 | `forexlab/backtest.py` | Mesin backtest, dengan pergeseran eksekusi satu batang |
 | `forexlab/strategies.py` | Strategi dan pembanding wajib |
@@ -197,15 +260,23 @@ sedikit untuk disimpulkan apa pun.
 | `forexlab/validation.py` | Uji di luar sampel dan deteksi overfitting, pintu kedua |
 | `forexlab/metrics.py` | Penurunan terdalam, harapan keuntungan, Sharpe |
 | `forexlab/data.py` | Pembaca CSV dan pembuat data acak |
-| `tests/` | 33 tes, termasuk dua yang memaku jarak eksekusi tepat satu batang |
+| `tests/` | 49 tes, termasuk dua yang memaku jarak eksekusi tepat satu batang dan satu yang menjaga keadilan pembanding |
 
 ## Batas kemampuan alat ini
 
 Perlu disebutkan terus terang:
 
-- Mata uang akun dianggap sama dengan mata uang kedua pasangan, misalnya
-  akun dolar untuk EURUSD. Untuk pasangan lain, laba-rugi perlu dikonversi
-  dan angkanya akan bergeser.
+- Pada forex, mata uang akun dianggap sama dengan mata uang kedua pasangan,
+  misalnya akun dolar untuk EURUSD. Untuk pasangan lain, laba-rugi perlu
+  dikonversi dan angkanya akan bergeser.
+- Pada saham Indonesia, selisih beli-jual dianggap selalu satu fraksi harga.
+  Itu wajar untuk saham likuid, tapi terlalu optimis untuk saham tipis yang
+  selisihnya bisa beberapa fraksi.
+- Batas auto reject harian, yaitu ARA dan ARB, belum dimodelkan. Pada hari
+  harga menyentuh batas itu, pesanan nyata bisa tidak terisi sama sekali.
+- Dividen belum dihitung, padahal itu bagian nyata dari keuntungan saham.
+  Akibatnya pembanding beli lalu tahan di sini justru lebih rendah dari
+  kenyataannya.
 - Slippage di luar spread tidak dimodelkan, dan pada pasar nyata slippage
   selalu memperburuk hasil. Jadi angka di sini adalah **batas optimis**.
 - Lompatan harga akhir pekan tidak ada di data harian, padahal itu salah satu

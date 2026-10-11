@@ -111,6 +111,8 @@ def build_result(
 ) -> Result:
     profits = np.array([t.profit for t in broker.trades], dtype=float)
     costs = float(np.sum([t.costs for t in broker.trades])) if broker.trades else 0.0
+    # Posisi yang masih terbuka di akhir periode sudah membayar biaya masuk.
+    costs += getattr(broker, "open_position_costs", 0.0)
 
     wins = profits[profits > 0]
     losses = profits[profits < 0]

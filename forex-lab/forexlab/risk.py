@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .broker import UNITS_PER_LOT, SimulatedBroker
+from .broker import SimulatedBroker
 
 
 @dataclass(frozen=True)
@@ -65,8 +65,17 @@ def position_size(
     units_by_margin = broker.max_units(mid_price)
 
     units = min(units_by_risk, units_by_leverage, units_by_margin)
-    # Dibulatkan ke bawah ke 0.01 lot, ukuran terkecil yang diterima broker.
-    min_step = UNITS_PER_LOT * 0.01
+
+    # Dibulatkan ke bawah ke ukuran terkecil yang benar-benar bisa dipesan.
+    # Di Bursa Efek Indonesia satuannya satu lot utuh, yaitu 100 lembar;
+    # tidak ada pecahan lot. Pada forex, broker retail menerima 0,01 lot.
+    config = broker.config
+    if config.market == "idx":
+        min_step = float(config.units_per_lot)
+    else:
+        min_step = config.units_per_lot * 0.01
+    if min_step <= 0:
+        return 0.0
     return (units // min_step) * min_step
 
 

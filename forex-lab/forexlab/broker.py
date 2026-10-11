@@ -24,32 +24,122 @@ from dataclasses import dataclass, field
 
 UNITS_PER_LOT = 100_000
 
+#: Fraksi harga di Bursa Efek Indonesia, berbeda menurut rentang harga saham.
+#: Satu fraksi adalah langkah harga terkecil yang bisa terjadi, dan setengah
+#: fraksi itulah selisih beli-jual terbaik yang mungkin didapat.
+IDX_TICK_BANDS: tuple[tuple[float, float], ...] = (
+    (200.0, 1.0),
+    (500.0, 2.0),
+    (2_000.0, 5.0),
+    (5_000.0, 10.0),
+    (float("inf"), 25.0),
+)
+
+
+def idx_tick_size(price: float) -> float:
+    """Fraksi harga yang berlaku untuk saham pada harga tertentu."""
+    for batas, fraksi in IDX_TICK_BANDS:
+        if price < batas:
+            return fraksi
+    return IDX_TICK_BANDS[-1][1]
+
 
 @dataclass(frozen=True)
 class BrokerConfig:
-    """Ketentuan broker. Nilai bawaan meniru broker retail leverage tinggi."""
+    """Ketentuan broker.
 
+    Satu kelas ini melayani dua pasar yang mekanika biayanya sangat berbeda:
+
+    forex: biaya utamanya spread dalam pip, ada leverage, ada biaya menginap,
+    dan posisi bisa ditutup paksa lewat stop out.
+
+    idx: saham Indonesia. Tidak ada leverage bagi pemodal biasa, tidak ada
+    biaya menginap, dan biayanya berupa persentase dari nilai transaksi yang
+    berbeda antara beli dan jual. Selisih beli-jual mengikuti fraksi harga
+    yang berubah menurut rentang harga saham.
+
+    Nilai bawaan meniru broker forex retail berleverage tinggi. Untuk saham
+    Indonesia, pakai IDX_BROKER di bawah.
+    """
+
+    market: str = "forex"
     leverage: int = 100
+    units_per_lot: int = UNITS_PER_LOT
     spread_pips: float = 1.5
     pip_size: float = 0.0001
+    spread_ticks: float = 1.0
     commission_per_lot: float = 0.0
+    commission_rate_buy: float = 0.0
+    commission_rate_sell: float = 0.0
     swap_per_lot_per_day: float = -2.0
     margin_call_level: float = 1.0
     stop_out_level: float = 0.5
     negative_balance_protection: bool = True
 
     def __post_init__(self) -> None:
+        if self.market not in ("forex", "idx"):
+            raise ValueError("market harus 'forex' atau 'idx'")
         if self.leverage < 1:
             raise ValueError("leverage minimal 1")
+        if self.units_per_lot < 1:
+            raise ValueError("units_per_lot minimal 1")
         if self.spread_pips < 0 or self.pip_size <= 0:
             raise ValueError("spread_pips tidak boleh negatif dan pip_size harus positif")
+        if self.spread_ticks < 0:
+            raise ValueError("spread_ticks tidak boleh negatif")
+        for nama, nilai in (
+            ("commission_rate_buy", self.commission_rate_buy),
+            ("commission_rate_sell", self.commission_rate_sell),
+        ):
+            if not 0 <= nilai < 0.05:
+                raise ValueError(f"{nama} harus di antara 0 dan 0.05")
         if not 0 <= self.stop_out_level <= self.margin_call_level:
             raise ValueError("stop_out_level harus di antara 0 dan margin_call_level")
 
-    @property
-    def half_spread(self) -> float:
-        """Jarak harga dari harga tengah ke harga beli atau harga jual."""
+    def half_spread(self, price: float) -> float:
+        """Jarak harga dari harga tengah ke harga beli atau harga jual.
+
+        Pada forex jaraknya tetap, karena spread dihitung dalam pip. Pada
+        saham Indonesia jaraknya ikut harga, karena fraksi harga saham Rp 500
+        berbeda dari saham Rp 5.000.
+        """
+        if self.market == "idx":
+            return self.spread_ticks * idx_tick_size(price) / 2.0
         return self.spread_pips * self.pip_size / 2.0
+
+    def commission(self, notional: float, units: float, is_buy: bool) -> float:
+        """Biaya satu kali transaksi, selalu positif.
+
+        Pada saham Indonesia, biaya jual lebih besar dari biaya beli karena
+        memuat pajak penghasilan final atas penjualan saham. Itu sebabnya
+        tarifnya dipisah, bukan disamakan.
+        """
+        rate = self.commission_rate_buy if is_buy else self.commission_rate_sell
+        per_lot = self.commission_per_lot * units / self.units_per_lot
+        return abs(notional) * rate + per_lot
+
+
+#: Broker saham Indonesia dengan biaya yang lazim berlaku.
+#:
+#: Tarif 0,15 persen saat beli dan 0,25 persen saat jual adalah angka umum
+#: yang sudah memuat komisi broker, biaya transaksi bursa, biaya kliring,
+#: pajak pertambahan nilai atas komisi, dan pajak penghasilan final 0,1
+#: persen yang hanya dikenakan saat menjual. Jadi satu putaran beli lalu jual
+#: menelan sekitar 0,4 persen.
+#:
+#: Tarif ini berbeda antar sekuritas, kadang cukup jauh. Periksa tarif
+#: sekuritas Anda sendiri dan ganti angkanya, karena pada strategi yang
+#: sering bertransaksi, selisih kecil di sini menentukan untung atau rugi.
+IDX_BROKER = BrokerConfig(
+    market="idx",
+    leverage=1,
+    units_per_lot=100,
+    spread_ticks=1.0,
+    commission_rate_buy=0.0015,
+    commission_rate_sell=0.0025,
+    commission_per_lot=0.0,
+    swap_per_lot_per_day=0.0,
+)
 
 
 @dataclass
@@ -61,10 +151,11 @@ class Position:
     margin: float
     stop_loss: float | None = None
     take_profit: float | None = None
+    units_per_lot: float = UNITS_PER_LOT
 
     @property
     def lots(self) -> float:
-        return self.units / UNITS_PER_LOT
+        return self.units / self.units_per_lot
 
 
 @dataclass
@@ -78,10 +169,11 @@ class Trade:
     profit: float
     costs: float
     reason: str
+    units_per_lot: float = UNITS_PER_LOT
 
     @property
     def lots(self) -> float:
-        return self.units / UNITS_PER_LOT
+        return self.units / self.units_per_lot
 
 
 class StopOut(Exception):
@@ -107,11 +199,11 @@ class SimulatedBroker:
 
     def ask(self, mid_price: float) -> float:
         """Harga beli, selalu di atas harga tengah."""
-        return mid_price + self.config.half_spread
+        return mid_price + self.config.half_spread(mid_price)
 
     def bid(self, mid_price: float) -> float:
         """Harga jual, selalu di bawah harga tengah."""
-        return mid_price - self.config.half_spread
+        return mid_price - self.config.half_spread(mid_price)
 
     # --- keadaan akun --------------------------------------------------
 
@@ -179,7 +271,11 @@ class SimulatedBroker:
         entry_price = self.ask(mid_price) if direction > 0 else self.bid(mid_price)
         margin = units * entry_price / self.config.leverage
 
-        commission = self.config.commission_per_lot * units / UNITS_PER_LOT
+        # Membuka posisi beli berarti transaksi beli; membuka posisi jual
+        # berarti transaksi jual. Tarifnya berbeda pada saham Indonesia.
+        commission = self.config.commission(
+            units * entry_price, units, is_buy=direction > 0
+        )
         self.balance -= commission
         self._accrued_costs = commission
 
@@ -191,6 +287,7 @@ class SimulatedBroker:
             margin=margin,
             stop_loss=stop_loss,
             take_profit=take_profit,
+            units_per_lot=self.config.units_per_lot,
         )
         return self.position
 
@@ -201,7 +298,10 @@ class SimulatedBroker:
         position = self.position
         exit_price = self.bid(mid_price) if position.direction > 0 else self.ask(mid_price)
         gross = position.direction * position.units * (exit_price - position.entry_price)
-        commission = self.config.commission_per_lot * position.units / UNITS_PER_LOT
+        # Menutup posisi beli berarti transaksi jual, dan sebaliknya.
+        commission = self.config.commission(
+            position.units * exit_price, position.units, is_buy=position.direction < 0
+        )
 
         self.balance += gross - commission
         costs = self._accrued_costs + commission
@@ -216,6 +316,7 @@ class SimulatedBroker:
             profit=gross - commission,
             costs=costs,
             reason=reason,
+            units_per_lot=self.config.units_per_lot,
         )
         self.trades.append(trade)
         self.position = None
@@ -245,17 +346,17 @@ class SimulatedBroker:
 
         if position.direction > 0:
             if position.stop_loss is not None and self.bid(low) <= position.stop_loss:
-                return self.close_position(position.stop_loss + self.config.half_spread,
+                return self.close_position(position.stop_loss + self.config.half_spread(position.stop_loss),
                                            bar_index, "stop_loss")
             if position.take_profit is not None and self.bid(high) >= position.take_profit:
-                return self.close_position(position.take_profit + self.config.half_spread,
+                return self.close_position(position.take_profit + self.config.half_spread(position.take_profit),
                                            bar_index, "take_profit")
         else:
             if position.stop_loss is not None and self.ask(high) >= position.stop_loss:
-                return self.close_position(position.stop_loss - self.config.half_spread,
+                return self.close_position(position.stop_loss - self.config.half_spread(position.stop_loss),
                                            bar_index, "stop_loss")
             if position.take_profit is not None and self.ask(low) <= position.take_profit:
-                return self.close_position(position.take_profit - self.config.half_spread,
+                return self.close_position(position.take_profit - self.config.half_spread(position.take_profit),
                                            bar_index, "take_profit")
         return None
 
@@ -279,6 +380,15 @@ class SimulatedBroker:
         if self.balance < 0 and self.config.negative_balance_protection:
             self.balance = 0.0
         return trade
+
+    @property
+    def open_position_costs(self) -> float:
+        """Biaya yang sudah dibayar untuk posisi yang masih terbuka.
+
+        Tanpa ini, strategi yang mengakhiri periode dengan posisi terbuka,
+        seperti beli lalu tahan, akan terlihat tidak berbiaya sama sekali.
+        """
+        return 0.0 if self.position is None else max(self._accrued_costs, 0.0)
 
     @property
     def is_blown(self) -> bool:

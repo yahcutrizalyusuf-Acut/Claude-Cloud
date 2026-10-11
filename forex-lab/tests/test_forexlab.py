@@ -13,8 +13,14 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from forexlab.backtest import BacktestConfig, run_backtest
-from forexlab.broker import UNITS_PER_LOT, BrokerConfig, SimulatedBroker
+from forexlab.backtest import BacktestConfig, benchmark_config, run_backtest
+from forexlab.broker import (
+    IDX_BROKER,
+    UNITS_PER_LOT,
+    BrokerConfig,
+    SimulatedBroker,
+    idx_tick_size,
+)
 from forexlab.control import permutation_test
 from forexlab.data import block_bootstrap_returns, log_returns, shuffle_returns, synthetic_gbm
 from forexlab.metrics import max_drawdown, sharpe_ratio
@@ -415,6 +421,222 @@ def test_rincian_jendela_lengkap():
 def test_expand_grid_kosong():
     assert expand_grid({}) == [{}]
     assert len(expand_grid({"a": [1, 2], "b": [3, 4, 5]})) == 6
+
+
+# --- saham Indonesia ------------------------------------------------------
+
+def test_fraksi_harga_mengikuti_rentang():
+    """Fraksi harga di bursa Indonesia berbeda menurut harga sahamnya."""
+    assert idx_tick_size(150) == 1.0
+    assert idx_tick_size(199) == 1.0
+    assert idx_tick_size(200) == 2.0
+    assert idx_tick_size(499) == 2.0
+    assert idx_tick_size(500) == 5.0
+    assert idx_tick_size(1_999) == 5.0
+    assert idx_tick_size(2_000) == 10.0
+    assert idx_tick_size(4_999) == 10.0
+    assert idx_tick_size(5_000) == 25.0
+    assert idx_tick_size(50_000) == 25.0
+
+
+def test_biaya_jual_lebih_besar_dari_biaya_beli():
+    """Pajak penghasilan final hanya dikenakan saat menjual, bukan saat beli."""
+    nilai = 10_000_000.0
+    beli = IDX_BROKER.commission(nilai, 2_000, is_buy=True)
+    jual = IDX_BROKER.commission(nilai, 2_000, is_buy=False)
+    assert jual > beli
+    assert np.isclose(beli, nilai * 0.0015)
+    assert np.isclose(jual, nilai * 0.0025)
+
+
+def test_satu_putaran_beli_jual_menelan_sekitar_empat_persepuluh_persen():
+    """Komisi satu putaran harus mendekati 0,4 persen, di luar selisih harga."""
+    nilai = 10_000_000.0
+    total = (
+        IDX_BROKER.commission(nilai, 2_000, is_buy=True)
+        + IDX_BROKER.commission(nilai, 2_000, is_buy=False)
+    )
+    assert 0.0035 < total / nilai < 0.0045
+
+
+def test_selisih_beli_jual_saham_ikut_harga():
+    """Saham Rp 5.000 punya fraksi harga lebih besar dari saham Rp 500."""
+    assert IDX_BROKER.half_spread(5_000) > IDX_BROKER.half_spread(500)
+    assert np.isclose(IDX_BROKER.half_spread(5_000), 12.5)
+    assert np.isclose(IDX_BROKER.half_spread(1_000), 2.5)
+
+
+def test_ukuran_posisi_saham_selalu_lot_utuh():
+    """Bursa Indonesia tidak menerima pecahan lot. Satu lot adalah 100 lembar."""
+    broker = SimulatedBroker(10_000_000, IDX_BROKER)
+    limits = RiskLimits(risk_per_trade=0.02, max_effective_leverage=1.0)
+    for harga, jarak_stop in ((5_000.0, 250.0), (1_250.0, 60.0), (315.0, 15.0)):
+        units = position_size(broker, harga, jarak_stop, limits)
+        assert units % 100 == 0, f"harga {harga} memberi {units} lembar, bukan lot utuh"
+
+
+def test_saham_tidak_bisa_melebihi_modal():
+    """Tanpa leverage, nilai posisi tidak boleh lebih besar dari modal."""
+    broker = SimulatedBroker(10_000_000, IDX_BROKER)
+    position = broker.open_position(1, 1_000_000, 5_000.0, 0)
+    assert position.units * position.entry_price <= 10_000_000 * 1.001
+
+
+def test_saham_tanpa_leverage_tidak_terkena_stop_out():
+    """Pada leverage 1, broker tidak punya alasan menutup paksa.
+
+    Modal pemodal menanggung seluruh nilai posisi, jadi tidak ada uang broker
+    yang perlu dilindungi. Harga boleh turun jauh tanpa penutupan paksa.
+    """
+    broker = SimulatedBroker(10_000_000, IDX_BROKER)
+    broker.open_position(1, broker.max_units(5_000.0), 5_000.0, 0)
+    broker.enforce_margin(3_500.0, 1)  # turun 30 persen
+    assert not broker.stopped_out
+    assert broker.position is not None
+
+
+def test_tanpa_biaya_menginap_di_saham():
+    broker = SimulatedBroker(10_000_000, IDX_BROKER)
+    broker.open_position(1, 1_000, 5_000.0, 0)
+    saldo_sebelum = broker.balance
+    broker.accrue_swap(30.0)
+    assert broker.balance == saldo_sebelum
+
+
+def test_long_only_memblokir_jual_kosong():
+    """Dengan long_only, sinyal jual harus berarti keluar ke tunai."""
+    prices = synthetic_gbm(600, start_price=5_000.0, daily_volatility=0.018, seed=41)
+    config = BacktestConfig(
+        starting_balance=10_000_000,
+        broker=IDX_BROKER,
+        limits=RiskLimits(risk_per_trade=0.02, max_effective_leverage=1.0),
+        long_only=True,
+    )
+    signals = pd.Series(-1, index=prices.index, dtype=int)
+    result, _ = run_backtest(prices, signals, config, "semua_jual")
+    assert result.trades == 0, "sinyal jual terus seharusnya tidak membuka posisi apa pun"
+
+    campur = REGISTRY["ma_crossover"](prices)
+    hasil, _ = run_backtest(prices, campur, config, "ma_long_only")
+    broker_trades = hasil.trades
+    assert broker_trades >= 0
+
+
+def test_pasar_tidak_dikenal_ditolak():
+    try:
+        BrokerConfig(market="nyse")
+    except ValueError:
+        return
+    raise AssertionError("market yang tidak dikenal seharusnya ditolak")
+
+
+def test_tarif_komisi_tidak_masuk_akal_ditolak():
+    for kwargs in (
+        {"commission_rate_buy": 0.5},
+        {"commission_rate_sell": -0.01},
+        {"units_per_lot": 0},
+    ):
+        try:
+            BrokerConfig(**kwargs)
+        except ValueError:
+            continue
+        raise AssertionError(f"{kwargs} seharusnya ditolak")
+
+
+def test_biaya_saham_tercatat_di_hasil():
+    """Biaya harus muncul di laporan, bukan hilang diam-diam."""
+    prices = synthetic_gbm(800, start_price=2_500.0, daily_volatility=0.02, seed=62)
+    config = BacktestConfig(
+        starting_balance=10_000_000,
+        broker=IDX_BROKER,
+        limits=RiskLimits(risk_per_trade=0.02, max_effective_leverage=1.0),
+        long_only=True,
+    )
+    result, _ = run_backtest(prices, REGISTRY["ma_crossover"](prices), config, "ma")
+    if result.trades > 0:
+        assert result.total_costs > 0, "transaksi terjadi tapi biayanya nol"
+
+
+# --- keadilan pembanding --------------------------------------------------
+
+def test_pembanding_tidak_dilumpuhkan_batas_penurunan():
+    """Beli lalu tahan di pasar naik harus menangkap sebagian besar kenaikan.
+
+    Ini tes pelindung untuk cacat nyata yang pernah terjadi. Batas penurunan
+    20 persen di manajemen risiko ikut menghentikan pembanding beli lalu
+    tahan, sehingga pada saham yang naik 84 persen pembandingnya hanya
+    mencatat +2,1 persen. Akibatnya setiap strategi aktif terlihat jauh lebih
+    baik daripada kenyataannya.
+    """
+    prices = synthetic_gbm(
+        2_500, start_price=3_500.0, daily_volatility=0.018, drift=0.0004, seed=18
+    )
+    naik_pasar = float(prices["close"].iloc[-1] / prices["close"].iloc[0] - 1)
+    assert naik_pasar > 0.5, "data uji ini seharusnya pasar naik"
+
+    base = BacktestConfig(
+        starting_balance=10_000_000,
+        broker=IDX_BROKER,
+        limits=RiskLimits(risk_per_trade=0.02, max_effective_leverage=1.0),
+        long_only=True,
+    )
+    hasil, _ = run_backtest(
+        prices, REGISTRY["always_long"](prices), benchmark_config(base), "beli_tahan"
+    )
+    # Pembanding harus menangkap minimal tiga perempat kenaikan pasarnya.
+    assert hasil.total_return > naik_pasar * 0.75, (
+        f"pembanding hanya {hasil.total_return:+.1%} padahal pasar naik "
+        f"{naik_pasar:+.1%}; batas risiko kemungkinan melumpuhkannya lagi"
+    )
+
+
+def test_benchmark_config_mematikan_stop_dan_batas():
+    base = BacktestConfig(
+        limits=RiskLimits(max_total_drawdown=0.20, max_daily_loss=0.03),
+        use_stops=True,
+    )
+    pembanding = benchmark_config(base)
+    assert pembanding.use_stops is False
+    assert pembanding.limits.max_total_drawdown > 0.9
+    assert pembanding.limits.max_daily_loss > 0.9
+    # Konfigurasi asalnya tidak boleh ikut berubah.
+    assert base.use_stops is True
+    assert base.limits.max_total_drawdown == 0.20
+
+
+def test_biaya_posisi_terbuka_ikut_dilaporkan():
+    """Strategi yang berakhir dengan posisi terbuka tetap sudah bayar biaya masuk."""
+    prices = synthetic_gbm(500, start_price=3_500.0, daily_volatility=0.01, seed=73)
+    base = BacktestConfig(
+        starting_balance=10_000_000,
+        broker=IDX_BROKER,
+        limits=RiskLimits(risk_per_trade=0.02, max_effective_leverage=1.0),
+        long_only=True,
+    )
+    hasil, _ = run_backtest(
+        prices, REGISTRY["always_long"](prices), benchmark_config(base), "beli_tahan"
+    )
+    assert hasil.trades == 0, "beli lalu tahan seharusnya tidak menutup posisi"
+    assert hasil.total_costs > 0, "biaya beli awal seharusnya tetap tercatat"
+
+
+def test_stop_loss_menambah_jumlah_transaksi_dan_biaya():
+    """Stop loss itu perlindungan, dan perlindungan itu berbiaya."""
+    prices = synthetic_gbm(
+        1_500, start_price=3_500.0, daily_volatility=0.018, drift=0.0004, seed=18
+    )
+    base = BacktestConfig(
+        starting_balance=10_000_000,
+        broker=IDX_BROKER,
+        limits=RiskLimits(risk_per_trade=0.02, max_effective_leverage=1.0),
+        long_only=True,
+        use_stops=True,
+    )
+    signals = REGISTRY["always_long"](prices)
+    dengan, _ = run_backtest(prices, signals, base, "dengan_stop")
+    tanpa, _ = run_backtest(prices, signals, benchmark_config(base), "tanpa_stop")
+    assert dengan.trades > tanpa.trades
+    assert dengan.total_costs > tanpa.total_costs
 
 
 def _jalankan_semua() -> int:

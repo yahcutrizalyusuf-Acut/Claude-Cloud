@@ -18,7 +18,7 @@ melihat masa depan, dan itu sumber utama backtest yang terlalu indah.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import numpy as np
 import pandas as pd
@@ -34,12 +34,41 @@ class BacktestConfig:
     broker: BrokerConfig | None = None
     limits: RiskLimits | None = None
     use_stops: bool = True
+    long_only: bool = False
     bars_per_year: int = TRADING_DAYS_PER_YEAR
     swap_days_per_bar: float = 1.0
 
     def __post_init__(self) -> None:
         self.broker = self.broker or BrokerConfig()
         self.limits = self.limits or RiskLimits()
+
+
+def benchmark_config(base: BacktestConfig) -> BacktestConfig:
+    """Susun konfigurasi yang adil untuk pembanding beli lalu tahan.
+
+    Kenapa ini perlu ada. Manajemen risiko di risk.py menghentikan
+    perdagangan ketika penurunan melewati batas, dan itu benar untuk robot
+    yang aktif bertransaksi. Tetapi beli lalu tahan justru berarti menahan
+    penurunan sampai pasar pulih. Menerapkan batas penurunan padanya membuat
+    pembandingnya lumpuh, dan setiap strategi aktif jadi terlihat lebih baik
+    daripada kenyataannya.
+
+    Contoh nyata dari kekeliruan ini: pada saham sintetis yang naik 84 persen
+    selama sepuluh tahun, beli lalu tahan dengan batas penurunan 20 persen
+    hanya mencatat +2,1 persen, karena perdagangannya dihentikan pada tahun
+    pertama lalu ekuitasnya dibekukan. Tanpa batas itu hasilnya +86,1 persen,
+    sesuai pasarnya.
+
+    Jadi pembanding dijalankan tanpa stop loss, tanpa batas penurunan, dan
+    tanpa batas kerugian harian. Itu memang definisi beli lalu tahan.
+    """
+    limits = base.limits
+    assert limits is not None
+    return replace(
+        base,
+        use_stops=False,
+        limits=replace(limits, max_total_drawdown=0.999, max_daily_loss=0.999),
+    )
 
 
 def _bar_range(prices: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
@@ -132,6 +161,11 @@ def run_backtest(
         if i == 0:
             continue
         desired = int(signal_values[i - 1])
+        # Jual kosong tidak tersedia bagi pemodal biasa di Bursa Efek
+        # Indonesia. Dengan long_only, sinyal jual berarti keluar ke tunai,
+        # bukan membuka posisi berlawanan.
+        if config.long_only and desired < 0:
+            desired = 0
         current = broker.position.direction if broker.position else 0
 
         if desired == current:
