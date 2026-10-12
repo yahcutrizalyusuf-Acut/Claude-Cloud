@@ -846,6 +846,79 @@ def test_kode_saham_indonesia_diberi_akhiran_bursa():
     assert modul.kode_lengkap("AAPL.US") == "AAPL.US"
 
 
+# --- cacat yang ditemukan oleh berkas Yahoo Finance sungguhan -------------
+
+def test_baris_dividen_disisipkan_tidak_merusak_pembacaan():
+    """Yahoo Finance menyisipkan baris dividen di tengah data harga.
+
+    Baris itu punya kolom lebih sedikit daripada judulnya, sehingga sel yang
+    hilang terisi nilai kosong, bukan teks. Pada berkas BBCA sungguhan hal
+    ini menghentikan pembacaan dengan galat, bukan sekadar membuang barisnya.
+    """
+    path = _tulis(
+        "yahoo_dividen.csv",
+        "Date,Open,High,Low,Close,Adj Close,Volume\n"
+        "Sep 1 2026,6450.00,6600.00,6425.00,6600.00,6600.00,117969900\n"
+        "Aug 31 2026,25 Dividend     Dividends on any given ex-date\n"
+        "Aug 31 2026,6450.00,6525.00,6400.00,6475.00,6475.00,230904500\n"
+        "Aug 28 2026,6425.00,6525.00,6400.00,6475.00,6450.00,156445200\n",
+    )
+    frame = load_csv(path, market="idx")
+    assert len(frame) == 3, "baris dividen seharusnya dibuang, bukan menggagalkan pembacaan"
+    assert frame["close"].notna().all()
+
+
+def test_harga_disesuaikan_diutamakan_atas_harga_mentah():
+    """Kolom Adj Close memuat dividen, dan tanpa itu hasil jangka panjang bias.
+
+    Urutan kolom menaruh Close sebelum Adj Close, jadi tanpa penanganan
+    khusus harga mentah yang terpilih dan dividen bertahun-tahun hilang.
+    """
+    path = _tulis(
+        "yahoo_adj.csv",
+        "Date,Open,High,Low,Close,Adj Close,Volume\n"
+        "Mar 27 2026,6775.00,6850.00,6700.00,6700.00,6373.84,283556500\n"
+        "Mar 26 2026,6900.00,6975.00,6850.00,6875.00,6540.32,145934900\n",
+    )
+    disesuaikan = load_csv(path, market="idx")
+    mentah = load_csv(path, market="idx", prefer_adjusted=False)
+    assert float(disesuaikan["close"].iloc[-1]) == 6373.84
+    assert float(mentah["close"].iloc[-1]) == 6700.00
+
+
+def test_seluruh_harga_berada_pada_satu_skala():
+    """Penutupan yang disesuaikan tanpa menyesuaikan tertinggi dan terendah
+    menghasilkan keadaan mustahil yang merusak pengujian stop loss.
+
+    Pada berkas BBCA sungguhan hal ini menghasilkan penutupan 6.922 pada hari
+    yang harga terendahnya 7.300.
+    """
+    path = _tulis(
+        "yahoo_skala.csv",
+        "Date,Open,High,Low,Close,Adj Close,Volume\n"
+        "Oct 14 2025,7275.00,7350.00,7250.00,7250.00,6851.77,151862300\n"
+        "Oct 13 2025,7300.00,7375.00,7300.00,7325.00,6922.65,101847900\n",
+    )
+    frame = load_csv(path, market="idx")
+    assert (frame["close"] <= frame["high"] + 1e-6).all(), "penutupan di atas tertinggi"
+    assert (frame["close"] >= frame["low"] - 1e-6).all(), "penutupan di bawah terendah"
+    assert (frame["high"] >= frame["low"]).all()
+
+
+def test_data_setahun_ditolak_untuk_uji_luar_sampel():
+    """Satu tahun data tidak cukup untuk menyetel lalu menguji.
+
+    Jendela bawaan butuh 500 batang untuk menyetel dan 125 untuk menguji,
+    sementara setahun bursa hanya sekitar 240 batang.
+    """
+    try:
+        walk_forward_windows(240, train_bars=500, test_bars=125)
+    except ValueError as galat:
+        assert "terlalu pendek" in str(galat)
+        return
+    raise AssertionError("data setahun seharusnya ditolak untuk uji di luar sampel")
+
+
 def _jalankan_semua() -> int:
     gagal = 0
     tes = [(n, f) for n, f in sorted(globals().items())

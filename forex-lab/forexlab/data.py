@@ -21,6 +21,13 @@ REQUIRED_COLUMN = "close"
 #: Nama kolom yang dipakai berbagai penyedia data, dipetakan ke nama baku.
 #: Sumber Indonesia memakai istilah bahasa Indonesia, sumber asing memakai
 #: bahasa Inggris, dan investing.com memakai "Terakhir" untuk harga penutupan.
+#: Nama kolom harga penutupan yang sudah disesuaikan dengan aksi korporasi.
+#: Kolom ini memuat pengaruh dividen dan pemecahan saham, sehingga
+#: mencerminkan hasil yang benar-benar diterima pemegang saham.
+ALIAS_HARGA_DISESUAIKAN: frozenset[str] = frozenset(
+    {"adj close", "adj. close", "adjusted close", "close adjusted"}
+)
+
 ALIAS_KOLOM: dict[str, str] = {
     "close": "close",
     "close price": "close",
@@ -163,7 +170,11 @@ def bersihkan_kolom(kolom: pd.Series, titik_ribuan: bool | None = None) -> pd.Se
     if pd.api.types.is_numeric_dtype(kolom):
         return kolom.astype(float)
 
-    teks = kolom.astype(str).str.strip()
+    # Nilai kosong harus diubah menjadi teks kosong lebih dulu. Pada berkas
+    # Yahoo Finance, baris dividen punya kolom lebih sedikit daripada
+    # judulnya, sehingga sel yang hilang terisi nilai kosong, bukan teks,
+    # dan pemrosesan teks akan gagal di situ.
+    teks = kolom.fillna("").astype(str).str.strip()
     kandidat = [
         t.strip("()").replace("%", "").replace(" ", "").replace("\xa0", "").rstrip("kKmMbBtT")
         for t in teks
@@ -181,6 +192,7 @@ def load_csv(
     path: str,
     time_column: str | None = None,
     market: str | None = None,
+    prefer_adjusted: bool = True,
 ) -> pd.DataFrame:
     """Baca CSV harga dari penyedia data mana pun.
 
@@ -194,9 +206,19 @@ def load_csv(
     pada saham Indonesia tetapi 7,4 pada forex. Tanpa market, konvensinya
     ditebak dari isi kolom, dan tebakan itu bisa salah pada kasus tersebut.
 
-    Baris dengan tanggal atau harga yang tidak terbaca dibuang. Jumlahnya
-    tidak disembunyikan: periksa jumlah baris lewat quality.periksa untuk
-    memastikan tidak ada yang hilang diam-diam.
+    Bila berkas punya kolom harga yang sudah disesuaikan, seperti "Adj Close"
+    milik Yahoo Finance, kolom itulah yang dipakai secara bawaan. Kolom itu
+    memuat pengaruh dividen dan pemecahan saham, sehingga mencerminkan hasil
+    yang benar-benar diterima pemegang saham. Tanpa itu, pembanding beli lalu
+    tahan akan terlihat lebih rendah daripada kenyataannya, karena dividen
+    yang dibagikan selama bertahun-tahun hilang dari perhitungan. Setel
+    prefer_adjusted=False untuk memakai harga mentah.
+
+    Baris dengan tanggal atau harga yang tidak terbaca dibuang. Itu termasuk
+    baris dividen yang disisipkan Yahoo Finance di tengah data harga, yang
+    kolomnya lebih sedikit daripada judulnya. Jumlahnya tidak disembunyikan:
+    periksa jumlah baris lewat quality.periksa untuk memastikan tidak ada
+    yang hilang diam-diam.
     """
     if market not in (None, "idx", "forex"):
         raise ValueError("market harus None, 'idx', atau 'forex'")
@@ -239,6 +261,16 @@ def load_csv(
         if baku is not None and baku not in terpakai:
             terpakai[baku] = asli
 
+    # Harga yang sudah disesuaikan menang atas harga mentah bila keduanya ada.
+    # Urutan kolom di berkas menaruh "Close" sebelum "Adj Close", jadi tanpa
+    # langkah ini harga mentah yang terpilih dan dividen ikut hilang.
+    kolom_disesuaikan = None
+    if prefer_adjusted:
+        for asli in frame.columns:
+            if asli in ALIAS_HARGA_DISESUAIKAN:
+                kolom_disesuaikan = asli
+                break
+
     if REQUIRED_COLUMN not in terpakai:
         raise ValueError(
             f"Kolom harga penutupan tidak ditemukan di {path}. "
@@ -253,6 +285,21 @@ def load_csv(
             # konvensinya dibiarkan ditebak dari kolomnya sendiri.
             paksa = titik_ribuan if baku != "volume" else None
             bersih[baku] = bersihkan_kolom(frame[terpakai[baku]], paksa)
+
+    if kolom_disesuaikan is not None:
+        # Seluruh harga harus berada pada satu skala. Memakai penutupan yang
+        # sudah disesuaikan sementara tertinggi dan terendahnya masih mentah
+        # menghasilkan keadaan mustahil, misalnya penutupan di bawah harga
+        # terendah hari itu, dan itu merusak pengujian stop loss sepenuhnya.
+        # Karena itu pembukaan, tertinggi, dan terendah dikalikan rasio
+        # penyesuaian hari yang sama.
+        disesuaikan = bersihkan_kolom(frame[kolom_disesuaikan], titik_ribuan)
+        mentah = bersih[REQUIRED_COLUMN]
+        rasio = (disesuaikan / mentah.where(mentah > 0)).reindex(bersih.index)
+        for baku in ("open", "high", "low"):
+            if baku in bersih.columns:
+                bersih[baku] = bersih[baku] * rasio
+        bersih[REQUIRED_COLUMN] = disesuaikan
 
     return bersih.dropna(subset=[REQUIRED_COLUMN])
 

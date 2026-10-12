@@ -314,7 +314,7 @@ sedikit untuk disimpulkan apa pun.
 | `forexlab/metrics.py` | Penurunan terdalam, harapan keuntungan, Sharpe |
 | `forexlab/data.py` | Pembaca CSV dari berbagai penyedia, dan pembuat data acak |
 | `forexlab/quality.py` | Pemeriksa mutu data dan pendeteksi pemecahan saham |
-| `tests/` | 67 tes, termasuk dua yang memaku jarak eksekusi tepat satu batang dan satu yang menjaga keadilan pembanding |
+| `tests/` | 72 tes, termasuk dua yang memaku jarak eksekusi tepat satu batang dan satu yang menjaga keadilan pembanding |
 
 ## Batas kemampuan alat ini
 
@@ -328,9 +328,11 @@ Perlu disebutkan terus terang:
   selisihnya bisa beberapa fraksi.
 - Batas auto reject harian, yaitu ARA dan ARB, belum dimodelkan. Pada hari
   harga menyentuh batas itu, pesanan nyata bisa tidak terisi sama sekali.
-- Dividen belum dihitung, padahal itu bagian nyata dari keuntungan saham.
-  Akibatnya pembanding beli lalu tahan di sini justru lebih rendah dari
-  kenyataannya.
+- Dividen ikut dihitung bila berkasnya punya kolom harga yang sudah
+  disesuaikan, seperti "Adj Close" milik Yahoo Finance. Tanpa kolom itu,
+  dividen hilang dari perhitungan dan pembanding beli lalu tahan akan
+  terlihat lebih rendah daripada kenyataannya. Pada BBCA selama setahun,
+  selisihnya 4,7 poin persen.
 - Slippage di luar spread tidak dimodelkan, dan pada pasar nyata slippage
   selalu memperburuk hasil. Jadi angka di sini adalah **batas optimis**.
 - Lompatan harga akhir pekan tidak ada di data harian, padahal itu salah satu
