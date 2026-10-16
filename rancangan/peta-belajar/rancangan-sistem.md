@@ -2,7 +2,7 @@
 title: "Rancangan Sistem Peta Belajar"
 subtitle: "Aplikasi Android pemilih video YouTube untuk belajar apa saja"
 author: "Disusun Acut2 untuk Acut"
-date: "16 Oktober 2026 · Versi rancangan 2.1 · Semua gratis untuk pengguna"
+date: "16 Oktober 2026 · Versi rancangan 2.2 · Semua gratis untuk pengguna"
 ---
 
 # Ringkasan satu halaman
@@ -38,7 +38,7 @@ date: "16 Oktober 2026 · Versi rancangan 2.1 · Semua gratis untuk pengguna"
 2. Jatah pencarian YouTube gratis terbatas. Karena video dicari bertahap per modul, jatah itu cukup untuk sekitar 15 sampai 25 rencana baru per hari.
 3. Biaya AI ditanggung Acut dan belum ada pemasukan. Biaya dibatasi dengan jatah 3 rencana baru per bulan per pengguna dan batas anggaran bulanan.
 
-**Yang perlu Acut putuskan.** Ada tujuh keputusan, dirinci di bab Keputusan. Yang paling mendesak adalah akun layanan dan modal biaya AI bulanan.
+**Yang perlu Acut putuskan.** Ada delapan keputusan, dirinci di bab Keputusan. Yang paling mendesak adalah akun layanan dan modal biaya AI bulanan.
 
 # Masalah dan tujuan
 
@@ -564,7 +564,156 @@ Persetujuan ini ditanyakan terpisah, satu per satu, dan pengguna boleh menolak t
 - **Mengumpulkan lalu menjual atau menerbitkan statistik YouTube,** misalnya angka tonton atau peringkat kanal. Aturan YouTube melarang data dari jalur resminya dikumpulkan untuk pihak lain. Laporan kita memakai penilaian pengguna kita sendiri.
 - **Menyimpan data YouTube lebih dari 30 hari** tanpa diperbarui.
 
-Kebijakan privasi perlu diperiksa ahli hukum sebelum tayang, sebab akibat pelanggaran UU Pelindungan Data Pribadi bisa berupa denda dan pidana.
+Batasan hukumnya, termasuk ancaman denda dan pidana, dirinci di bab berikut.
+
+# Batasan hukum data pribadi
+
+Bab ini merangkum UU Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi, yang berlaku penuh sejak 17 Oktober 2024, beserta Putusan MK Nomor 151/PUU-XXII/2024. **Bab ini bukan nasihat hukum.** Nomor pasal dan tenggatnya wajib dicek ulang oleh ahli hukum sebelum tayang.
+
+## Kedudukan kita
+
+| Peran menurut UU | Siapa | Artinya |
+|---|---|---|
+| Pengendali Data Pribadi | Acut, atau usaha Acut | Menentukan tujuan dan cara data diolah, dan menanggung kewajiban utama |
+| Prosesor Data Pribadi | Supabase (Singapura), Anthropic (Amerika Serikat), Google | Mengolah data atas perintah kita |
+| Subjek Data Pribadi | Pengguna | Pemilik data, dengan hak yang dilindungi undang-undang |
+
+## Dasar pemrosesan
+
+Pasal 20 mewajibkan setiap pengolahan data punya dasar yang sah. Ada enam dasar, antara lain persetujuan yang sah secara eksplisit, pelaksanaan perjanjian, dan kewajiban hukum. Pembagian untuk aplikasi kita:
+
+| Data dan tujuannya | Dasar | Catatan |
+|---|---|---|
+| Akun: nama dan email dari Google | Perjanjian | Syarat layanan disetujui saat mendaftar |
+| Rencana, kemajuan, catatan, pengingat | Perjanjian | Inilah layanan yang diminta pengguna |
+| Teks keinginan yang dikirim ke Claude di Amerika Serikat | Perjanjian, ditambah pemberitahuan transfer ke luar negeri | Pasal 56: negara tujuan harus punya pelindungan setara, dan ini disebut jelas di kebijakan privasi |
+| Penilaian video dan topik untuk memperbaiki mesin | Persetujuan eksplisit | Dicentang sendiri oleh pengguna, terpisah dari syarat layanan |
+| Promosi, sponsor, testimoni, laporan untuk lembaga | Persetujuan eksplisit | Satu persetujuan untuk setiap tujuan |
+
+Data yang benar-benar tanpa nama dan tidak bisa dikaitkan kembali ke seseorang bukan lagi data pribadi. Tapi selama data masih tersimpan bersama nomor akun, data itu tetap data pribadi.
+
+## Syarat persetujuan yang sah
+
+Menurut Pasal 22, persetujuan yang tidak memenuhi syarat **batal demi hukum**. Karena itu setiap persetujuan di aplikasi wajib:
+
+- **Tertulis atau terekam.** Centang atau tombol di aplikasi sah, asalkan tercatat waktunya dan versi teks yang disetujui.
+- **Terpisah untuk setiap tujuan,** dengan bahasa yang jelas dan sederhana. Persetujuan tidak boleh disembunyikan di dalam syarat yang panjang.
+- **Tidak tercentang otomatis.** Pengguna sendiri yang mencentang.
+- **Bisa ditarik kapan saja.** Setelah ditarik, pengolahan untuk tujuan itu dihentikan.
+
+## Informasi yang wajib disampaikan
+
+Pasal 21 mewajibkan kita menyampaikan informasi berikut sebelum meminta persetujuan. Semuanya dimuat di kebijakan privasi berbahasa Indonesia sederhana:
+
+- Dasar hukum dan tujuan pengolahan.
+- Jenis data dan alasan data itu dibutuhkan.
+- Berapa lama data disimpan.
+- Pihak yang ikut mengolah data, yaitu Supabase, Anthropic, dan Google, beserta negaranya.
+- Hak-hak pengguna dan cara memakainya.
+
+## Data pribadi spesifik
+
+Pasal 4 menggolongkan data kesehatan, biometrik, genetika, catatan kejahatan, data anak, dan data keuangan pribadi sebagai **data spesifik** yang perlindungannya lebih ketat.
+
+- **Kita tidak pernah meminta data spesifik.**
+- **Risikonya:** pengguna bisa menulisnya sendiri di catatan atau topik, misalnya belajar mengelola diabetes atau melunasi utang.
+- **Penangkalnya:** isi catatan tidak dianalisis dan tidak dibuka, topik hanya dipakai dalam angka gabungan, dan di kolom catatan ada pengingat: "Jangan menulis data kesehatan, keuangan, atau data pribadi orang lain di sini."
+
+## Batas umur
+
+Data anak termasuk data spesifik, dan Pasal 25 mewajibkan persetujuan orang tua atau wali. Karena itu versi 1 hanya untuk umur 18 tahun ke atas:
+
+- Saat mendaftar, pengguna mencentang "Saya berumur 18 tahun atau lebih".
+- Sasaran umur di Play Store diatur 18 tahun ke atas.
+- Akun yang ketahuan milik anak dihapus.
+
+## Hak pengguna dan tenggatnya
+
+Permintaan akses, perbaikan, penghapusan, penarikan persetujuan, dan pembatasan pengolahan dipenuhi **paling lambat 3 × 24 jam** sejak permintaan diterima. Tombol di aplikasi memenuhinya seketika. Untuk permintaan lewat email, tenggat ini dihitung sejak email masuk.
+
+## Masa simpan dan penghapusan
+
+| Data | Masa simpan |
+|---|---|
+| Akun aktif dan catatannya | Selama akun aktif |
+| Akun yang dihapus pengguna | Dihapus dari database seketika. Salinan di cadangan mingguan ikut hilang paling lama 30 hari, sebab cadangan lama dihapus bergilir |
+| Akun tidak aktif | Diberi tahu pada bulan ke-23, lalu dihapus pada bulan ke-24 |
+| Bukti persetujuan | Selama akun ada, ditambah waktu yang dibutuhkan untuk pembuktian hukum, sesuai saran ahli hukum |
+| Data YouTube | Disegarkan atau dihapus setiap 30 hari |
+
+## Keamanan
+
+UU mewajibkan pengendali menjaga keamanan data. Langkah minimal kita:
+
+- Verifikasi dua langkah di semua akun pengelola.
+- Data dienkripsi saat dikirim dan saat disimpan.
+- Akses database hanya untuk orang yang tercatat namanya.
+- Setiap pembukaan data pribadi dicatat.
+- Data pengguna tidak pernah disalin ke HP pribadi, WhatsApp, atau berkas lepas.
+
+## Kebocoran data
+
+Pasal 46 mewajibkan pemberitahuan tertulis **paling lambat 3 × 24 jam** kepada pengguna yang terdampak dan kepada lembaga pengawas. Isi pemberitahuannya: data apa yang terungkap, kapan dan bagaimana kejadiannya, dan apa yang sudah dilakukan. Dalam kasus tertentu, kita juga wajib mengumumkannya kepada masyarakat.
+
+Menurut satu sumber per Agustus 2026, lembaga pengawas PDP belum terbentuk. Ahli hukum perlu menetapkan ke mana laporan dikirim selama lembaga itu belum ada.
+
+## Penilaian dampak
+
+Pengolahan berisiko tinggi, misalnya pemantauan yang sistematis atau berskala besar, wajib didahului penilaian dampak pelindungan data. Aplikasi kita memantau kemajuan belajar pengguna. Karena itu Acut2 menyusun penilaian dampak sederhana sebelum tayang. Biayanya nol, dan penilaian ini menjadi bukti bahwa kita berhati-hati.
+
+## Pejabat Pelindungan Data
+
+Pasal 53, setelah Putusan MK 151/PUU-XXII/2024, mewajibkan penunjukan pejabat pelindungan data kalau salah satu keadaan berikut terpenuhi:
+
+- Pengolahan untuk pelayanan publik.
+- Kegiatan inti yang memerlukan pemantauan teratur dan sistematis berskala besar.
+- Pengolahan berskala besar atas data spesifik.
+
+Ukuran "skala besar" belum dirinci peraturan pelaksana. Usulnya, Acut ditunjuk sebagai penanggung jawab data sejak awal, dengan email kontak yang tercantum di kebijakan privasi. Penunjukan pejabat resmi ditinjau ulang saat pengguna melewati 10.000 orang.
+
+## Ancaman sanksi
+
+| Pelanggaran | Ancaman |
+|---|---|
+| Sanksi administratif, Pasal 57 | Peringatan tertulis, penghentian sementara pengolahan, penghapusan data, dan denda sampai 2% dari pendapatan tahunan |
+| Memperoleh atau mengumpulkan data orang lain secara melawan hukum, Pasal 67 ayat 1 | Penjara sampai 5 tahun dan/atau denda sampai Rp5 miliar |
+| Mengungkapkan data orang lain secara melawan hukum, Pasal 67 ayat 2 | Penjara sampai 4 tahun dan/atau denda sampai Rp4 miliar |
+| Menggunakan data orang lain secara melawan hukum, Pasal 67 ayat 3 | Penjara sampai 5 tahun dan/atau denda sampai Rp5 miliar |
+| Dilakukan oleh badan usaha, Pasal 70 | Denda sampai 10 kali lipat, ditambah perampasan keuntungan, pembekuan usaha, pencabutan izin, atau pembubaran. Pengurus dan pemberi perintah juga bisa dipidana |
+
+Menurut satu sumber per Agustus 2026, lembaga pengawas dan peraturan pelaksana tentang denda administratif belum terbit. Tapi **ketentuan pidana sudah bisa ditegakkan** oleh polisi dan jaksa, jadi kita tidak boleh menunggu.
+
+## Garis merah
+
+Sepuluh hal yang tidak pernah boleh dilakukan:
+
+1. Menjual, menyewakan, atau menukar data pribadi.
+2. Membuka isi catatan pengguna tanpa izinnya.
+3. Memakai data untuk tujuan yang tidak disebut di kebijakan privasi.
+4. Mengirim data pribadi ke pihak lain tanpa dasar yang sah.
+5. Membuat kotak persetujuan yang tercentang otomatis.
+6. Menerima pengguna di bawah 18 tahun.
+7. Menyimpan data lebih lama dari masa simpannya.
+8. Menunda pemberitahuan kebocoran lebih dari 3 × 24 jam.
+9. Menyalin data pengguna ke HP pribadi, WhatsApp, atau berkas lepas.
+10. Memberi akses akun pengelola kepada orang lain tanpa tercatat.
+
+## Daftar periksa sebelum tayang
+
+| No | Yang harus beres | Bukti |
+|---|---|---|
+| 1 | Kebijakan privasi dan syarat layanan dalam bahasa Indonesia sederhana, diperiksa ahli hukum | Berkas yang sudah diperiksa |
+| 2 | Layar persetujuan terpisah, tidak tercentang otomatis, dan bukti persetujuan tersimpan | Tangkapan layar dan isi tabel bukti |
+| 3 | Konfirmasi umur 18 tahun ke atas | Tangkapan layar pendaftaran |
+| 4 | Pengingat di kolom catatan | Tangkapan layar |
+| 5 | Tombol Unduh dataku, Perbaiki data, Tarik persetujuan, dan Hapus akun, plus halaman web untuk hapus akun | Uji coba setiap tombol |
+| 6 | Perjanjian pemrosesan data dengan Supabase dan Anthropic disetujui | Salinan perjanjian |
+| 7 | Verifikasi dua langkah di semua akun, dan daftar orang yang punya akses | Daftar akses |
+| 8 | Catatan pembukaan data pribadi berjalan | Contoh catatan |
+| 9 | Penilaian dampak pelindungan data | Berkas penilaian |
+| 10 | Langkah tanggap kebocoran dan contoh surat pemberitahuan | Berkas langkah tanggap |
+| 11 | Formulir Keamanan Data di Play Store sesuai kenyataan | Tangkapan layar Play Console |
+| 12 | Penanggung jawab data dan email kontak tercantum | Kebijakan privasi |
 
 # Aturan yang wajib dipatuhi
 
@@ -697,7 +846,7 @@ Akun Play Console memakai akun Jeumpa yang sudah ada, jadi tidak ada biaya penda
 | Merekrut penguji, target 20, cadangan 12 | Acut | 25 sampai 31 Okt | Daftar nama dan email Google |
 | Membangun versi 1 | Acut2 | 26 Okt sampai 6 Nov | Berkas aplikasi untuk diuji |
 | Menyusun 200 jalur siap pakai lewat layanan Batch | Acut2, daftar topik disetujui Acut | 1 sampai 6 Nov | Daftar topik dan jumlah jalur yang tersimpan |
-| Menyusun kebijakan privasi dan langkah tanggap kebocoran, lalu diperiksa ahli hukum | Acut2 menyusun, Acut mencari pemeriksa | 1 sampai 7 Nov | Halaman kebijakan privasi yang sudah diperiksa |
+| Menyusun kebijakan privasi, syarat layanan, penilaian dampak, dan langkah tanggap kebocoran, lalu diperiksa ahli hukum | Acut2 menyusun, Acut mencari pemeriksa | 1 sampai 7 Nov | Berkas yang sudah diperiksa, dan 12 butir daftar periksa terpenuhi |
 | Uji internal di HP Acut dan perbaikan | Acut, Acut2 | 7 sampai 8 Nov | Daftar temuan yang sudah diperbaiki |
 | Uji tertutup 14 hari | Penguji | 9 sampai 23 Nov | Jumlah penguji aktif di Play Console |
 | Mengajukan akses produksi | Acut | 24 Nov | Tangkapan layar pengajuan |
@@ -740,6 +889,7 @@ Website juga membuka jalan untuk pemakaian di laptop, yang lebih nyaman untuk be
 5. **Tiga topik Jalur Teruji pertama.** Usulan Acut2: "membuat konten", "AutoCAD", dan "Excel untuk kerja".
 6. **Daftar penguji.** 20 orang dengan akun Google, paling lambat 31 Oktober.
 7. **Pemeriksa kebijakan privasi.** Siapa ahli hukum yang bisa memeriksa kebijakan privasi sebelum 7 November?
+8. **Penanggung jawab data.** Setuju Acut ditunjuk sebagai penanggung jawab data, dengan email kontak khusus?
 
 # Riwayat ganti arah
 
@@ -758,6 +908,7 @@ Website juga membuka jalan untuk pemakaian di laptop, yang lebih nyaman untuk be
 | 16 Okt | Versi 2.0: semua fasilitas gratis untuk pengguna; rencana berbayar disimpan di bab terakhir | Keputusan Acut: manfaat dibuktikan dulu |
 | 16 Okt | Ditambah tujuh pagar supaya gratis tetap terarah, dan rencana disusun dengan Haiku | Kekhawatiran Acut bahwa gratis membuat orang nyasar; biaya harus serendah mungkin |
 | 16 Okt | Versi 2.1: bab Siapa Memegang Data dan Pemanfaatan Data, tombol Unduh dataku, cadangan mingguan | Pertanyaan Acut soal tempat dan pemakaian data; Acut memilih catatan dijaga dengan aturan dan akses terbatas |
+| 16 Okt | Versi 2.2: bab Batasan Hukum Data Pribadi, berisi dasar pemrosesan, syarat persetujuan, data spesifik, batas umur, tenggat, sanksi, garis merah, dan daftar periksa | Permintaan Acut: pelanggaran UU PDP bisa berujung pidana, jadi batasannya harus akurat |
 
 # Fasilitas berbayar untuk tahap lanjutan
 
