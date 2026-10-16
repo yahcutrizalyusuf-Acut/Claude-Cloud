@@ -2,7 +2,7 @@
 title: "Rancangan Sistem Peta Belajar"
 subtitle: "Aplikasi Android pemilih video YouTube untuk belajar apa saja"
 author: "Disusun Acut2 untuk Acut"
-date: "16 Oktober 2026 · Versi rancangan 1.1"
+date: "16 Oktober 2026 · Versi rancangan 1.2"
 ---
 
 # Ringkasan satu halaman
@@ -203,7 +203,7 @@ Daftar modul dan judul yang dibagi per level. Setiap judul menampilkan durasi vi
 Layar terpenting setelah mesin pemilih.
 
 - **HP tegak:** video di atas, tiga tombol besar di bawahnya, lalu daftar catatan langkah itu.
-- **HP miring:** video mengisi sekitar tiga perempat layar, dan tombol berjajar di kolom sempit sebelah kanan.
+- **HP miring, Mode Layar Lebar:** video mengisi sekitar 90% layar. Di tepi kanan ada jalur tipis berisi satu tombol bulat yang bisa digeser naik-turun. Rinciannya ada di bab Layar Belajar dan buku catatan.
 
 Tombol tidak pernah diletakkan di atas video, sebab aturan YouTube melarangnya.
 
@@ -356,6 +356,54 @@ Batasan dari YouTube:
 - Ukuran pemutar minimal 200 × 200 piksel.
 - Video tidak boleh diputar saat layar mati atau diunduh.
 - Kalau pengguna menekan tombol layar penuh milik YouTube, tombol kita tidak terlihat sampai ia keluar dari layar penuh.
+
+Pelanggaran aturan ini berisiko besar. YouTube bisa mencabut kunci akses aplikasi, sehingga pencarian video dan pemutar sama-sama mati.
+
+## Mode Layar Lebar
+
+Mode ini usulan Acut, supaya pengguna bisa menonton hampir layar penuh sambil tetap punya tombol catatan seperti tombol bulat di iPhone. Mode Layar Lebar aktif otomatis saat HP dimiringkan.
+
+<!-- VISUAL:lebar -->
+
+<!-- ASCII-START -->
+
+```
+Saat menonton:
+┌─────────────────────────┬──┐
+│                         │  │
+│      VIDEO (±90%)       │ ◉│
+│                         │  │
+└─────────────────────────┴──┘
+
+Saat tombol ◉ ditekan:
+┌──────────────┬─────────────┐
+│ VIDEO kecil  │ Beri catatan│
+│ berhenti di  │ Isi tanya   │
+│ 01:17        │ Simpulkan   │
+│              │ [Simpan]    │
+└──────────────┴─────────────┘
+```
+
+<!-- ASCII-END -->
+
+Cara kerjanya:
+
+1. **Saat menonton,** video mengisi sekitar 90% layar. Tombol bulat berada di jalur tipis di tepi kanan, di samping video, bukan di atasnya. Tombol bisa digeser naik-turun sepanjang jalur itu supaya tidak mengganggu.
+2. **Saat tombol ditekan,** video berhenti otomatis dan menitnya tercatat. Video mengecil ke kiri, lalu menu muncul di kanan: **Beri catatan**, **Isi pertanyaan**, dan **Tarik 1 kesimpulan**. Menu tidak menutupi video, sebab video bergeser memberi tempat.
+3. **Saat Simpan ditekan,** menu tertutup, video kembali melebar, dan lanjut dari menit yang sama.
+
+Mode ini tetap mematuhi aturan YouTube, sebab tidak ada apa pun di atas video. Kelemahannya, layar tidak 100% penuh karena jalur tombol di tepi kanan selalu tersisa.
+
+## Jalan pintas tanpa tombol
+
+Dua jalan pintas ini tidak menaruh apa pun di atas video, sehingga bisa dipakai juga saat pengguna memakai layar penuh milik YouTube. Keduanya **wajib diuji dulu di HP sungguhan** sebelum masuk versi 1.
+
+| Jalan pintas | Cara | Yang perlu diuji |
+|---|---|---|
+| Tombol volume | Tekan tombol volume bawah dua kali dengan cepat: video berhenti, layar penuh tertutup, menu catatan terbuka | Apakah aplikasi bisa membaca tombol volume saat layar penuh YouTube aktif, dan apakah suara tetap bisa diatur normal |
+| Goyang HP | Goyangkan HP dua kali: video berhenti dan menu catatan terbuka | Seberapa sering terpicu tanpa sengaja saat HP dipegang sambil berbaring atau di kendaraan |
+
+Kalau hasil uji bagus, kedua jalan pintas tersedia di pengaturan dan bisa dimatikan. Kalau tidak andal, keduanya ditunda dan Mode Layar Lebar tetap menjadi cara utama.
 
 ## Tanya ke AI milik pengguna
 
@@ -528,6 +576,8 @@ YouTube tidak membagi apa pun kepada aplikasi yang menyematkan video. Pemasukan 
 - Rencana belajar yang bisa diedit, lalu disetujui sebelum video dicari
 - Mesin pemilih: jalur otomatis dan Jalur Teruji
 - Layar Belajar dengan pemutar resmi, plus tombol Catat, Tanya, dan Simpulkan
+- Mode Layar Lebar saat HP dimiringkan, dengan tombol bulat di tepi kanan
+- Jalan pintas tombol volume dan goyang HP, kalau lolos uji
 - Menit video tercatat otomatis
 - Tanya dan rangkum lewat AI milik pengguna
 - Penilaian "Membantu" dan "Tidak sesuai", dengan video cadangan
@@ -550,7 +600,7 @@ YouTube tidak membagi apa pun kepada aplikasi yang menyematkan video. Pemasukan 
 | Kegiatan | Siapa | Kapan | Bukti selesai |
 |---|---|---|---|
 | Uji mesin pemilih secara manual untuk 3 topik | Acut2 menyusun, Acut menilai | 19 sampai 22 Okt | 3 jalur dan nilai tepat sasaran dari Acut |
-| Uji pemutar resmi di HP Acut: putar, jeda, baca menit | Acut2 membuat, Acut mencoba | 21 sampai 23 Okt | Rekaman layar dari Acut |
+| Uji pemutar resmi di HP Acut: putar, jeda, baca menit, Mode Layar Lebar, jalan pintas tombol volume dan goyang HP | Acut2 membuat, Acut mencoba | 21 sampai 23 Okt | Rekaman layar dari Acut dan catatan hasil tiap jalan pintas |
 | Membuka akun Supabase dan Google Cloud, mengisi saldo Claude API | Acut, dipandu Acut2 | 24 sampai 25 Okt | Tangkapan layar ketiga akun |
 | Merekrut penguji, target 20, cadangan 12 | Acut | 25 sampai 31 Okt | Daftar nama dan email Google |
 | Membangun versi 1 | Acut2 | 26 Okt sampai 6 Nov | Berkas aplikasi untuk diuji |
@@ -570,6 +620,7 @@ Selama uji tertutup, Acut2 mengirim laporan mingguan berisi angka-angka di bab U
 | Pengguna mengedit rencana sampai urutannya kacau | AI memeriksa urutan dan memberi peringatan lembut, keputusan tetap di pengguna |
 | Penguji kurang dari 12 selama 14 hari | Rekrut 20, kirim pengingat lewat WhatsApp, dan siapkan tugas kecil harian |
 | Kreator mematikan izin pemutaran di aplikasi lain | Saring sejak awal, dan otomatis ganti dengan cadangan |
+| Tombol atau menu tidak sengaja menutupi video, sehingga melanggar aturan YouTube | Mode Layar Lebar menggeser video, tidak menutupinya. Setiap tampilan diperiksa sebelum tayang |
 | Pemeriksa Play Store menolak | Tanpa izin khusus, kebijakan privasi lengkap, dan tombol hapus akun |
 | Belum ada yang mau membayar | Versi 1 gratis untuk membuktikan manfaat, lalu uji Paket Plus dan tawaran ke satu lembaga |
 | Video cepat basi, terutama topik AI | Saring video lama dan segarkan data setiap 30 hari |
@@ -602,6 +653,7 @@ Website juga membuka jalan untuk pemakaian di laptop, yang lebih nyaman untuk be
 | 16 Okt | Tujuan utama ditegaskan: pemilih video tepat sasaran | Penegasan Acut; fitur lain hanya pendukung |
 | 16 Okt | Cara memilih: gabungan jalur teruji dan jalur otomatis | Pengguna boleh mengetik topik apa saja |
 | 16 Okt | Ditambah layar Rencana belajar: judul bisa diedit, video dicari setelah Setuju, bertahap per modul | Usulan Acut; pengguna ikut menentukan isi, dan jatah YouTube lebih hemat |
+| 16 Okt | Ditambah Mode Layar Lebar dan jalan pintas tombol volume dan goyang HP | Usulan Acut: menonton hampir layar penuh dengan tombol seperti iPhone, tanpa melanggar larangan YouTube menutupi video |
 
 # Sumber
 
