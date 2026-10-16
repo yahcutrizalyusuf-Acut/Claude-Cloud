@@ -2,7 +2,7 @@
 title: "Rancangan Sistem Peta Belajar"
 subtitle: "Aplikasi Android pemilih video YouTube untuk belajar apa saja"
 author: "Disusun Acut2 untuk Acut"
-date: "16 Oktober 2026 · Versi rancangan 1.0"
+date: "16 Oktober 2026 · Versi rancangan 1.1"
 ---
 
 # Ringkasan satu halaman
@@ -11,27 +11,28 @@ date: "16 Oktober 2026 · Versi rancangan 1.0"
 
 **Masalah yang diselesaikan.** Orang yang ingin belajar, misalnya membuat konten, AutoCAD, atau memakai AI, menghabiskan waktu mencari video satu per satu di YouTube. Mereka mengambang, tidak tahu harus mulai dari mana, lalu jenuh dan berhenti.
 
-**Cara kerjanya dalam satu kalimat.** Pengguna menulis keinginannya, menjawab beberapa pertanyaan pilihan, lalu menerima jalur video berurutan dari banyak kreator, dan menontonnya di dalam aplikasi sambil mencatat, bertanya, dan menarik kesimpulan.
+**Cara kerjanya dalam satu kalimat.** Pengguna menulis keinginannya, menjawab beberapa pertanyaan pilihan, meninjau daftar judul yang akan dipelajari dan boleh mengeditnya, lalu setelah menekan Setuju menerima video berurutan dari banyak kreator, dan menontonnya di dalam aplikasi sambil mencatat, bertanya, dan menarik kesimpulan.
 
 **Pusat tenaga.** Mesin pemilih video adalah jantung produk. Buku catatan dan menu lain hanya pendukung supaya nyaman.
 
 **Pembeda dari aplikasi lain.**
 
 - Jalur disusun dari banyak kreator, bukan satu video yang ditempel pengguna.
+- Pengguna meninjau dan boleh mengedit daftar judul sebelum video dicari.
 - Bahasa Indonesia didahulukan, dengan pertanyaan pilihan dan tes level.
 - Jalur yang sering dipakai diperiksa manusia lalu diberi tanda **Teruji**.
 - Bertanya dan merangkum memakai AI milik pengguna sendiri, jadi biaya kita hampir nol.
 
 **Teknologi.** Aplikasi dibuat dengan Expo (React Native), server kecil memakai Supabase, video dicari lewat jalur resmi YouTube, dan pemilihan dibantu Claude. Semuanya punya jatah gratis.
 
-**Biaya tunai.** Sekitar Rp500 untuk setiap jalur baru yang disusun mesin. Selama uji tertutup, perkiraannya Rp30 ribu sebulan, dengan batas siaga Rp75 ribu.
+**Biaya tunai.** Sekitar Rp500 untuk setiap rencana baru topik kecil, dan sekitar Rp1.200 untuk topik besar yang dibayar bertahap per modul. Selama uji tertutup, perkiraannya Rp30 ribu sebulan, dengan batas siaga Rp75 ribu.
 
 **Jadwal.** Versi 1 siap diuji di HP Acut pada 7 November. Uji tertutup Play Store berlangsung 9 sampai 23 November. Target tayang 1 Desember 2026, cadangan 15 Desember.
 
 **Tiga risiko terbesar.**
 
 1. Mutu pilihan otomatis kurang tepat, padahal itu jantung produk.
-2. Jatah pencarian YouTube gratis hanya cukup untuk sekitar 12 jalur baru per hari.
+2. Jatah pencarian YouTube gratis terbatas. Karena video dicari bertahap per modul, jatah itu cukup untuk sekitar 15 sampai 25 rencana baru per hari.
 3. Belum ada orang yang terbukti mau membayar.
 
 **Yang perlu Acut putuskan.** Ada enam keputusan, dirinci di Bab 17. Yang paling mendesak adalah akun layanan dan saldo AI.
@@ -63,6 +64,7 @@ Setiap angka punya target dan cadangan. Cadangan adalah angka paling rendah yang
 |---|---|---|
 | Video pertama dinilai "Membantu" | 60% | 45% |
 | Lanjut ke video kedua | 50% | 35% |
+| Rencana disetujui tanpa disusun ulang | 70% | 50% |
 | Menyelesaikan level pertama jalur | 30% | 15% |
 | Penguji tetap aktif 14 hari | 20 orang | 12 orang |
 | Catatan per pengguna aktif | 3 | 1 |
@@ -91,16 +93,17 @@ Begini perjalanan Bang Rahmat dari membuka aplikasi sampai selesai satu langkah.
 
 1. **Menulis keinginan.** Di layar Beranda ia mengetik "bikin video promosi warung kopi".
 2. **Menjawab pertanyaan pilihan.** Aplikasi menanyakan empat sampai lima hal, satu per layar, cukup sekali ketuk: video untuk TikTok atau Instagram, sudah pernah mengedit atau belum, pakai HP atau laptop, bahasa video, dan waktu luang per hari.
-3. **Menerima jalur.** Dalam 10 sampai 30 detik, aplikasi menampilkan jalur berisi 6 sampai 12 langkah yang dibagi ke level Nol, Dasar, dan Lanjut. Setiap langkah punya satu video utama dan dua video cadangan.
-4. **Menonton di dalam aplikasi.** Ia menekan langkah pertama. Video diputar memakai pemutar resmi YouTube di dalam aplikasi, sehingga iklan dan hak kreator tetap utuh.
-5. **Mencatat sambil menonton.** Di bawah video ada tiga tombol besar: **Catat**, **Tanya**, dan **Simpulkan**. Saat salah satu ditekan, video otomatis berhenti dan menitnya tercatat sendiri.
-6. **Menyimpan lalu lanjut.** Setelah menulis, ia menekan Simpan dan video lanjut dari menit yang sama.
-7. **Menilai video.** Di akhir video ia memilih "Membantu" atau "Tidak sesuai". Kalau ia memilih "Tidak sesuai", video cadangan langsung tampil.
-8. **Menutup langkah.** Langkah dianggap selesai kalau ia menonton minimal 70% video dan menulis satu kesimpulan. Syarat ini mencegah centang asal-asalan, pelajaran dari uji halaman Claude ketika 17 langkah bisa dicentang dalam 6 menit.
+3. **Meninjau rencana belajar.** Sebelum satu video pun dicari, aplikasi menampilkan daftar judul yang akan dipelajari, dikelompokkan dalam modul. Bang Rahmat boleh mengubah judul, menghapus, menambah, menggeser urutan, atau menandai "Sudah bisa". Kalau tidak ingin mengubah apa pun, ia cukup menekan **Setuju**.
+4. **Menerima video.** Setelah Setuju, aplikasi mencarikan video untuk modul pertama dalam 10 sampai 30 detik. Setiap judul mendapat satu video utama dan dua video cadangan. Video untuk modul berikutnya dicari saat ia sudah menyelesaikan separuh modul sebelumnya.
+5. **Menonton di dalam aplikasi.** Ia menekan langkah pertama. Video diputar memakai pemutar resmi YouTube di dalam aplikasi, sehingga iklan dan hak kreator tetap utuh.
+6. **Mencatat sambil menonton.** Di bawah video ada tiga tombol besar: **Catat**, **Tanya**, dan **Simpulkan**. Saat salah satu ditekan, video otomatis berhenti dan menitnya tercatat sendiri.
+7. **Menyimpan lalu lanjut.** Setelah menulis, ia menekan Simpan dan video lanjut dari menit yang sama.
+8. **Menilai video.** Di akhir video ia memilih "Membantu" atau "Tidak sesuai". Kalau ia memilih "Tidak sesuai", video cadangan langsung tampil.
+9. **Menutup langkah.** Langkah dianggap selesai kalau ia menonton minimal 70% video dan menulis satu kesimpulan. Syarat ini mencegah centang asal-asalan, pelajaran dari uji halaman Claude ketika 17 langkah bisa dicentang dalam 6 menit.
 
 # Daftar layar
 
-Versi 1 punya sembilan layar. Tiga layar terpenting digambar di bawah ini.
+Versi 1 punya sepuluh layar. Empat layar terpenting digambar di bawah ini.
 
 <!-- VISUAL:layar -->
 
@@ -122,6 +125,23 @@ Versi 1 punya sembilan layar. Tiga layar terpenting digambar di bawah ini.
 │ ▸ Excel untuk Kerja          │
 └──────────────────────────────┘
           Layar Beranda
+```
+
+```
+┌──────────────────────────────┐
+│ Rencana belajar              │
+│ Belajar AI dari 0 sampai ahli│
+│ 8 modul · 31 judul           │
+│ Modul 1 · Kenal AI           │
+│  ✎ Apa itu AI & cara kerjanya│
+│  ✎ Mencoba ChatGPT & Claude  │
+│  ✓ Membuat akun (Sudah bisa) │
+│  + Tambah judul              │
+│ Modul 2 · Menulis perintah ▸ │
+│ [Susun ulang]                │
+│ [ Setuju, carikan videonya ] │
+└──────────────────────────────┘
+        Layar Rencana belajar
 ```
 
 ```
@@ -154,15 +174,31 @@ Isinya kolom "Mau belajar apa hari ini?", daftar jalur yang sedang dipelajari de
 
 Empat sampai lima kartu, satu kartu per layar, setiap kartu cukup sekali ketuk. Ada tombol "Lewati" untuk pengguna yang tidak sabar. Isi pertanyaannya dijelaskan di bab Mesin Pemilih.
 
-## 4. Menyusun jalur
+## 4. Rencana belajar
 
-Layar tunggu 10 sampai 30 detik dengan keterangan yang jujur tentang apa yang sedang dikerjakan, misalnya "Mencari video berbahasa Indonesia…" lalu "Memilih video untuk pemula…". Kalau jalur yang sama pernah disusun untuk orang lain, jalur langsung tampil tanpa menunggu.
+Layar ini usulan Acut. Isinya daftar judul yang akan dipelajari, dikelompokkan dalam modul, sebelum satu video pun dicari. Untuk topik besar seperti "belajar AI dari 0 sampai expert", modul dibagi ke empat level: Nol, Dasar, Lanjut, dan Ahli.
 
-## 5. Peta jalur
+Yang bisa dilakukan pengguna pada setiap judul:
 
-Daftar langkah yang dibagi per level. Setiap langkah menampilkan judul, durasi video, dan status selesai. Di bagian atas ada tanda **Teruji** atau **Disusun otomatis**.
+- **Ubah judul**, misalnya "Dasar prompt" menjadi "Cara memberi perintah ke ChatGPT".
+- **Hapus** judul yang tidak dibutuhkan.
+- **Tambah** judul sendiri di modul mana pun.
+- **Geser** urutan dengan menahan lalu menarik judul.
+- **Tandai "Sudah bisa"**, sehingga judul dilewati tanpa dihapus.
 
-## 6. Layar Belajar
+Di bawah daftar ada dua tombol: **Setuju, carikan videonya** dan **Susun ulang**. Tombol Setuju dibuat paling besar, sebab orang level nol biasanya belum tahu apa yang perlu diubah. Mengedit adalah pilihan, bukan kewajiban.
+
+Setelah pengguna mengedit, AI memeriksa urutannya sekali. Kalau ada yang janggal, muncul peringatan lembut, misalnya: "Judul *Membuat agen AI* butuh dasar *Menulis perintah yang baik* yang tadi dihapus. Tetap lanjut?" Keputusan tetap di tangan pengguna.
+
+## 5. Menyusun jalur
+
+Layar tunggu muncul dua kali: sekitar 10 detik saat rencana disusun, lalu 10 sampai 30 detik setelah Setuju saat video dicari. Keterangannya jujur tentang apa yang sedang dikerjakan, misalnya "Mencari video berbahasa Indonesia…" lalu "Memilih video untuk pemula…". Kalau jalur yang sama pernah disusun untuk orang lain, jalur langsung tampil tanpa menunggu.
+
+## 6. Peta jalur
+
+Daftar modul dan judul yang dibagi per level. Setiap judul menampilkan durasi video dan status selesai. Di bagian atas ada tanda **Teruji** atau **Disusun otomatis**, dan tombol **Ubah rencana**. Kalau rencana diubah di tengah jalan, video hanya dicari ulang untuk judul yang berubah.
+
+## 7. Layar Belajar
 
 Layar terpenting setelah mesin pemilih.
 
@@ -171,7 +207,7 @@ Layar terpenting setelah mesin pemilih.
 
 Tombol tidak pernah diletakkan di atas video, sebab aturan YouTube melarangnya.
 
-## 7. Panel catatan
+## 8. Panel catatan
 
 Muncul dari bawah saat tombol Catat, Tanya, atau Simpulkan ditekan. Video berhenti otomatis, dan menit video tercatat di pojok panel.
 
@@ -181,17 +217,17 @@ Muncul dari bawah saat tombol Catat, Tanya, atau Simpulkan ditekan. Video berhen
 
 Untuk menghemat ketikan, pengguna bisa menekan ikon mikrofon di papan ketik HP-nya. Fitur ini sudah ada di Android dan tidak perlu dibangun sendiri.
 
-## 8. Buku catatan
+## 9. Buku catatan
 
 Semua catatan, pertanyaan, jawaban, dan kesimpulan dikelompokkan per jalur dan per langkah. Setiap catatan bertanda menit dan bisa ditekan untuk membuka video tepat di menit itu. Ada pencarian, dan buku bisa dibagikan sebagai teks ke WhatsApp.
 
-## 9. Profil dan pengaturan
+## 10. Profil dan pengaturan
 
 Pengaturannya: AI pilihan (Claude, ChatGPT, Gemini, atau lainnya), bahasa video, pengingat belajar, kebijakan privasi, dan tombol **Hapus akun**. Tombol Hapus akun wajib ada menurut aturan Play Store.
 
 # Mesin pemilih video
 
-Ini jantung aplikasi. Mesin bekerja dalam enam tahap.
+Ini jantung aplikasi. Mesin bekerja dalam tujuh tahap. Tahap 4 adalah giliran pengguna.
 
 <!-- VISUAL:mesin -->
 
@@ -213,11 +249,23 @@ Paling banyak lima pertanyaan. Empat pertanyaan tetap, satu atau dua disesuaikan
 
 Pertanyaan pertama dibuat AI dari ketikan pengguna. Pertanyaan lain memakai daftar tetap, sehingga murah dan cepat.
 
-## Tahap 3. Menyusun kerangka jalur
+## Tahap 3. Menyusun rencana belajar
 
-AI menyusun 6 sampai 12 langkah belajar berurutan yang sesuai dengan jawaban pengguna. Setiap langkah punya judul, tujuan, dan kata kunci pencarian dalam bahasa Indonesia dan Inggris.
+AI menyusun rencana berupa **modul** (judul besar) yang berisi **judul-judul** (langkah belajar) berurutan, sesuai jawaban pengguna. Setiap judul menyimpan tujuan dan kata kunci pencarian dalam bahasa Indonesia dan Inggris, tapi pengguna hanya melihat judulnya.
 
-Contoh untuk Bang Rahmat:
+- **Topik kecil**, seperti video promosi warung, cukup 1 sampai 2 modul dengan 6 sampai 12 judul.
+- **Topik besar**, seperti AI dari 0 sampai ahli, bisa sampai 10 modul dengan 3 sampai 6 judul per modul.
+
+Contoh rencana untuk "belajar AI dari 0 sampai expert":
+
+| Level | Modul |
+|---|---|
+| Nol | 1. Kenal AI dan cara kerjanya · 2. Menulis perintah yang baik |
+| Dasar | 3. AI untuk kerja harian · 4. Membuat gambar dan video dengan AI |
+| Lanjut | 5. Projects, Skills, dan Connectors · 6. Otomatisasi dan agen AI |
+| Ahli | 7. Membangun aplikasi AI sendiri · 8. Dasar pembelajaran mesin, etika, dan keamanan |
+
+Contoh untuk Bang Rahmat, satu modul:
 
 1. Kenal aplikasi CapCut di HP
 2. Merekam video yang terang dan stabil
@@ -226,9 +274,21 @@ Contoh untuk Bang Rahmat:
 5. Membuat 3 detik pembuka yang menarik
 6. Mengunggah ke TikTok dan memilih jam tayang
 
-## Tahap 4. Mencari kandidat video
+## Tahap 4. Pengguna mengedit dan menyetujui
 
-Untuk setiap langkah, mesin mencari video lewat jalur resmi YouTube. Bahasa Indonesia dicari lebih dulu. Bahasa Inggris hanya dipakai kalau kandidat Indonesia kurang dari lima dan pengguna mengizinkan.
+Pengguna meninjau rencana di layar Rencana belajar: mengubah, menghapus, menambah, menggeser, atau menandai "Sudah bisa". Kalau ada yang diedit, AI memeriksa urutannya sekali dan memberi peringatan lembut bila ada dasar yang hilang. Video baru dicari setelah pengguna menekan **Setuju**.
+
+Tahap ini punya tiga manfaat:
+
+- **Lebih tepat sasaran,** sebab pengguna sendiri yang memastikan judulnya sesuai kebutuhan.
+- **Lebih hemat,** sebab tidak ada jatah YouTube yang terpakai untuk judul yang akhirnya dihapus.
+- **Bahan belajar bagi kita.** Judul yang sering ditambah atau dihapus orang menjadi masukan untuk memperbaiki rencana bawaan.
+
+## Tahap 5. Mencari kandidat video
+
+Video dicari **bertahap per modul**. Setelah Setuju, hanya modul pertama yang dicarikan. Modul berikutnya dicari saat pengguna sudah menyelesaikan separuh modul sebelumnya. Alasannya, banyak orang berhenti sebelum modul terakhir, dan video untuk modul yang masih jauh bisa basi sebelum ditonton.
+
+Untuk setiap judul, mesin mencari video lewat jalur resmi YouTube. Bahasa Indonesia dicari lebih dulu. Bahasa Inggris hanya dipakai kalau kandidat Indonesia kurang dari lima dan pengguna mengizinkan.
 
 **Saringan wajib.** Video yang tidak lolos langsung dibuang:
 
@@ -238,7 +298,7 @@ Untuk setiap langkah, mesin mencari video lewat jalur resmi YouTube. Bahasa Indo
 - Untuk topik teknologi, diunggah paling lama 24 bulan terakhir.
 - Ditonton minimal 1.000 kali, kecuali dari kanal resmi pembuat alat.
 
-## Tahap 5. Menilai dan memilih
+## Tahap 6. Menilai dan memilih
 
 Setiap kandidat diberi nilai dari lima sumber:
 
@@ -259,9 +319,10 @@ Setiap langkah mendapat satu video utama dan dua cadangan. Di jalur baru, penila
 
 **Batas yang perlu diketahui.** Isi video orang lain tidak bisa dibaca lewat jalur resmi YouTube. Mesin hanya membaca judul, deskripsi, dan daftar bab. Kekurangan ini ditutup oleh tombol "Membantu" dan "Tidak sesuai" dari pengguna.
 
-## Tahap 6. Menyimpan, memakai ulang, dan memperbaiki
+## Tahap 7. Menyimpan, memakai ulang, dan memperbaiki
 
-- **Dipakai ulang.** Jalur disimpan. Pengguna berikutnya dengan topik dan jawaban yang sama langsung menerima jalur itu, tanpa biaya dan tanpa menunggu.
+- **Dipakai ulang per rencana.** Rencana bawaan disimpan. Pengguna berikutnya dengan topik dan jawaban yang sama langsung menerimanya, tanpa biaya dan tanpa menunggu.
+- **Dipakai ulang per judul.** Pilihan video juga disimpan per judul, bersama level, bahasa, dan perangkatnya. Jadi rencana yang sudah diedit tetap bisa memakai pilihan video dari orang lain untuk judul yang sama.
 - **Diperbaiki sendiri.** Video yang sering dinilai "Tidak sesuai" turun nilainya dan diganti cadangan.
 - **Naik menjadi Teruji.** Jalur yang dipakai minimal 20 orang dengan nilai "Membantu" minimal 60% masuk daftar periksa. Setelah Acut atau Acut2 memeriksanya, jalur diberi tanda **Teruji**.
 - **Disegarkan setiap 30 hari.** Data dari YouTube wajib diperbarui atau dihapus setiap 30 hari. Video yang hilang atau dikunci otomatis diganti.
@@ -340,7 +401,8 @@ Sistem terdiri dari tiga bagian.
 | Tugas | Model | Alasan |
 |---|---|---|
 | Memahami ketikan dan membuat pertanyaan pertama | Claude Haiku 5.5 | Tugas pendek, paling murah |
-| Menyusun kerangka 6 sampai 12 langkah | Claude Sonnet 5.5 | Butuh penalaran urutan belajar yang baik |
+| Menyusun rencana: modul dan judul | Claude Sonnet 5.5 | Butuh penalaran urutan belajar yang baik |
+| Memeriksa urutan rencana setelah diedit | Claude Haiku 5.5 | Pendek dan murah |
 | Menilai kecocokan kandidat video | Claude Haiku 5.5 | Banyak dan berulang, harus murah |
 
 Kalau mutu susunan langkah ternyata kurang, susunan langkah bisa dipindah ke Claude Opus 5.5 dengan biaya sekitar dua kali lipat untuk tahap itu.
@@ -351,7 +413,8 @@ Kalau mutu susunan langkah ternyata kurang, susunan langkah bisa dipindah ke Cla
 |---|---|---|
 | Pengguna | Nama dari akun Google, email, tanggal daftar | Pengguna sendiri |
 | Profil belajar | Jawaban pertanyaan pilihan | Pengguna sendiri |
-| Topik dan jalur | Keinginan yang sudah dirapikan, susunan langkah | Semua, tanpa nama pengguna |
+| Topik dan rencana bawaan | Keinginan yang sudah dirapikan, modul dan judul | Semua, tanpa nama pengguna |
+| Rencana pribadi | Judul hasil edit pengguna | Pengguna sendiri. Perubahan judul dipakai tanpa nama untuk memperbaiki rencana bawaan |
 | Video | Nomor video YouTube, judul, kanal, durasi, nilai | Semua, disegarkan setiap 30 hari |
 | Penilaian | "Membantu" atau "Tidak sesuai", persen ditonton | Hanya angka gabungan yang dipakai |
 | Kemajuan | Langkah selesai, menit terakhir | Pengguna sendiri |
@@ -410,14 +473,17 @@ Kalau Jeumpa ternyata dibuat dengan teknologi lain, misalnya Flutter, pilihan in
 
 Semua angka rupiah memakai perkiraan kurs Rp16.500 per dolar AS.
 
-## Biaya satu jalur baru
+## Biaya satu rencana baru
 
 | Pekerjaan AI | Model | Biaya |
 |---|---|---|
 | Memahami keinginan, sekitar 1.500 token masuk dan 500 keluar | Haiku 5.5 | Rp7 |
-| Menyusun kerangka, sekitar 2.000 token masuk dan 1.500 keluar | Sonnet 5.5 | Rp314 |
-| Menilai kandidat untuk 8 langkah | Haiku 5.5 | Rp158 |
-| **Jumlah** | | **sekitar Rp480** |
+| Menyusun rencana, sekitar 2.000 token masuk dan 1.500 keluar | Sonnet 5.5 | Rp314 |
+| Memeriksa rencana yang diedit | Haiku 5.5 | Rp7 |
+| Menilai kandidat untuk 8 judul | Haiku 5.5 | Rp158 |
+| **Jumlah untuk topik kecil** | | **sekitar Rp490** |
+
+Untuk topik besar seperti AI dari 0 sampai ahli, dengan sekitar 30 judul, biayanya sekitar Rp1.200. Biaya ini dibayar bertahap per modul, dan berhenti kalau pengguna berhenti.
 
 Jalur yang dipakai ulang tidak memakan biaya AI sama sekali. Harga yang dipakai: Haiku 5.5 US$0,10 per sejuta token masuk dan US$0,50 per sejuta token keluar; Sonnet 5.5 US$2 dan US$10.
 
@@ -459,6 +525,7 @@ YouTube tidak membagi apa pun kepada aplikasi yang menyematkan video. Pemasukan 
 
 - Masuk sebagai tamu atau dengan akun Google
 - Menulis keinginan dan menjawab pertanyaan pilihan
+- Rencana belajar yang bisa diedit, lalu disetujui sebelum video dicari
 - Mesin pemilih: jalur otomatis dan Jalur Teruji
 - Layar Belajar dengan pemutar resmi, plus tombol Catat, Tanya, dan Simpulkan
 - Menit video tercatat otomatis
@@ -499,7 +566,8 @@ Selama uji tertutup, Acut2 mengirim laporan mingguan berisi angka-angka di bab U
 | Risiko | Penangkal |
 |---|---|
 | Pilihan otomatis kurang tepat sasaran | Uji manual 3 topik sebelum membangun, tombol "Tidak sesuai" dengan cadangan, dan Jalur Teruji |
-| Jatah pencarian YouTube hanya cukup sekitar 12 jalur baru per hari | Pakai ulang jalur, susun topik populer di malam hari, minta tambahan jatah setelah tayang |
+| Jatah pencarian YouTube hanya cukup sekitar 15 sampai 25 rencana baru per hari | Cari video bertahap per modul, pakai ulang per judul, susun topik populer di malam hari, minta tambahan jatah setelah tayang |
+| Pengguna mengedit rencana sampai urutannya kacau | AI memeriksa urutan dan memberi peringatan lembut, keputusan tetap di pengguna |
 | Penguji kurang dari 12 selama 14 hari | Rekrut 20, kirim pengingat lewat WhatsApp, dan siapkan tugas kecil harian |
 | Kreator mematikan izin pemutaran di aplikasi lain | Saring sejak awal, dan otomatis ganti dengan cadangan |
 | Pemeriksa Play Store menolak | Tanpa izin khusus, kebijakan privasi lengkap, dan tombol hapus akun |
@@ -533,6 +601,7 @@ Website juga membuka jalan untuk pemakaian di laptop, yang lebih nyaman untuk be
 | 16 Okt | Video diputar di dalam aplikasi, bukan tombol mengambang di atas YouTube | Tanpa izin khusus, jalan juga di iPhone, menit tercatat otomatis |
 | 16 Okt | Tujuan utama ditegaskan: pemilih video tepat sasaran | Penegasan Acut; fitur lain hanya pendukung |
 | 16 Okt | Cara memilih: gabungan jalur teruji dan jalur otomatis | Pengguna boleh mengetik topik apa saja |
+| 16 Okt | Ditambah layar Rencana belajar: judul bisa diedit, video dicari setelah Setuju, bertahap per modul | Usulan Acut; pengguna ikut menentukan isi, dan jatah YouTube lebih hemat |
 
 # Sumber
 
