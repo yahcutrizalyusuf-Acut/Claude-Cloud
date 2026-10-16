@@ -2,7 +2,7 @@
 title: "Rancangan Sistem Peta Belajar"
 subtitle: "Aplikasi Android pemilih video YouTube untuk belajar apa saja"
 author: "Disusun Acut2 untuk Acut"
-date: "16 Oktober 2026 · Versi rancangan 1.2"
+date: "16 Oktober 2026 · Versi rancangan 2.0 · Semua gratis untuk pengguna"
 ---
 
 # Ringkasan satu halaman
@@ -13,6 +13,8 @@ date: "16 Oktober 2026 · Versi rancangan 1.2"
 
 **Cara kerjanya dalam satu kalimat.** Pengguna menulis keinginannya, menjawab beberapa pertanyaan pilihan, meninjau daftar judul yang akan dipelajari dan boleh mengeditnya, lalu setelah menekan Setuju menerima video berurutan dari banyak kreator, dan menontonnya di dalam aplikasi sambil mencatat, bertanya, dan menarik kesimpulan.
 
+**Semua gratis untuk pengguna.** Tidak ada bayaran, langganan, atau saldo di versi ini. Biaya AI ditanggung kita dan ditekan serendah mungkin. Rencana fasilitas berbayar disimpan di bab terakhir untuk tahap lanjutan.
+
 **Pusat tenaga.** Mesin pemilih video adalah jantung produk. Buku catatan dan menu lain hanya pendukung supaya nyaman.
 
 **Pembeda dari aplikasi lain.**
@@ -22,10 +24,11 @@ date: "16 Oktober 2026 · Versi rancangan 1.2"
 - Bahasa Indonesia didahulukan, dengan pertanyaan pilihan dan tes level.
 - Jalur yang sering dipakai diperiksa manusia lalu diberi tanda **Teruji**.
 - Bertanya dan merangkum memakai AI milik pengguna sendiri, jadi biaya kita hampir nol.
+- Gratis tapi tetap terarah: paling banyak 2 jalur aktif, janji jadwal belajar, dan syarat langkah selesai.
 
 **Teknologi.** Aplikasi dibuat dengan Expo (React Native), server kecil memakai Supabase, video dicari lewat jalur resmi YouTube, dan pemilihan dibantu Claude. Semuanya punya jatah gratis.
 
-**Biaya tunai.** Sekitar Rp500 untuk setiap rencana baru topik kecil, dan sekitar Rp1.200 untuk topik besar yang dibayar bertahap per modul. Selama uji tertutup, perkiraannya Rp30 ribu sebulan, dengan batas siaga Rp75 ribu.
+**Biaya yang kita tanggung.** Sekitar Rp190 untuk setiap rencana baru topik kecil dan Rp640 untuk topik besar. Sebanyak 200 jalur siap pakai untuk topik populer disusun sekali dengan biaya sekitar Rp40 sampai 80 ribu. Selama November, perkiraannya Rp65 sampai 105 ribu, dengan batas siaga Rp150 ribu.
 
 **Jadwal.** Versi 1 siap diuji di HP Acut pada 7 November. Uji tertutup Play Store berlangsung 9 sampai 23 November. Target tayang 1 Desember 2026, cadangan 15 Desember.
 
@@ -33,9 +36,9 @@ date: "16 Oktober 2026 · Versi rancangan 1.2"
 
 1. Mutu pilihan otomatis kurang tepat, padahal itu jantung produk.
 2. Jatah pencarian YouTube gratis terbatas. Karena video dicari bertahap per modul, jatah itu cukup untuk sekitar 15 sampai 25 rencana baru per hari.
-3. Belum ada orang yang terbukti mau membayar.
+3. Biaya AI ditanggung Acut dan belum ada pemasukan. Biaya dibatasi dengan jatah 3 rencana baru per bulan per pengguna dan batas anggaran bulanan.
 
-**Yang perlu Acut putuskan.** Ada enam keputusan, dirinci di Bab 17. Yang paling mendesak adalah akun layanan dan saldo AI.
+**Yang perlu Acut putuskan.** Ada enam keputusan, dirinci di bab Keputusan. Yang paling mendesak adalah akun layanan dan modal biaya AI bulanan.
 
 # Masalah dan tujuan
 
@@ -65,6 +68,7 @@ Setiap angka punya target dan cadangan. Cadangan adalah angka paling rendah yang
 | Video pertama dinilai "Membantu" | 60% | 45% |
 | Lanjut ke video kedua | 50% | 35% |
 | Rencana disetujui tanpa disusun ulang | 70% | 50% |
+| Pengguna yang memasang janji jadwal belajar | 50% | 30% |
 | Menyelesaikan level pertama jalur | 30% | 15% |
 | Penguji tetap aktif 14 hari | 20 orang | 12 orang |
 | Catatan per pengguna aktif | 3 | 1 |
@@ -94,7 +98,7 @@ Begini perjalanan Bang Rahmat dari membuka aplikasi sampai selesai satu langkah.
 1. **Menulis keinginan.** Di layar Beranda ia mengetik "bikin video promosi warung kopi".
 2. **Menjawab pertanyaan pilihan.** Aplikasi menanyakan empat sampai lima hal, satu per layar, cukup sekali ketuk: video untuk TikTok atau Instagram, sudah pernah mengedit atau belum, pakai HP atau laptop, bahasa video, dan waktu luang per hari.
 3. **Meninjau rencana belajar.** Sebelum satu video pun dicari, aplikasi menampilkan daftar judul yang akan dipelajari, dikelompokkan dalam modul. Bang Rahmat boleh mengubah judul, menghapus, menambah, menggeser urutan, atau menandai "Sudah bisa". Kalau tidak ingin mengubah apa pun, ia cukup menekan **Setuju**.
-4. **Menerima video.** Setelah Setuju, aplikasi mencarikan video untuk modul pertama dalam 10 sampai 30 detik. Setiap judul mendapat satu video utama dan dua video cadangan. Video untuk modul berikutnya dicari saat ia sudah menyelesaikan separuh modul sebelumnya.
+4. **Berjanji lalu menerima video.** Saat menekan Setuju, ia memilih jadwal belajar, misalnya Senin, Rabu, dan Jumat jam 20.00. Aplikasi lalu mencarikan video untuk modul pertama dalam 10 sampai 30 detik. Setiap judul mendapat satu video utama dan dua video cadangan. Video untuk modul berikutnya dicari saat ia sudah menyelesaikan separuh modul sebelumnya.
 5. **Menonton di dalam aplikasi.** Ia menekan langkah pertama. Video diputar memakai pemutar resmi YouTube di dalam aplikasi, sehingga iklan dan hak kreator tetap utuh.
 6. **Mencatat sambil menonton.** Di bawah video ada tiga tombol besar: **Catat**, **Tanya**, dan **Simpulkan**. Saat salah satu ditekan, video otomatis berhenti dan menitnya tercatat sendiri.
 7. **Menyimpan lalu lanjut.** Setelah menulis, ia menekan Simpan dan video lanjut dari menit yang sama.
@@ -186,7 +190,7 @@ Yang bisa dilakukan pengguna pada setiap judul:
 - **Geser** urutan dengan menahan lalu menarik judul.
 - **Tandai "Sudah bisa"**, sehingga judul dilewati tanpa dihapus.
 
-Di bawah daftar ada dua tombol: **Setuju, carikan videonya** dan **Susun ulang**. Tombol Setuju dibuat paling besar, sebab orang level nol biasanya belum tahu apa yang perlu diubah. Mengedit adalah pilihan, bukan kewajiban.
+Di bawah daftar ada dua tombol: **Setuju, carikan videonya** dan **Susun ulang**. Tombol Setuju dibuat paling besar, sebab orang level nol biasanya belum tahu apa yang perlu diubah. Mengedit adalah pilihan, bukan kewajiban. Setelah Setuju, muncul pilihan jadwal belajar yang dijelaskan di bab Supaya Gratis Tetap Terarah.
 
 Setelah pengguna mengedit, AI memeriksa urutannya sekali. Kalau ada yang janggal, muncul peringatan lembut, misalnya: "Judul *Membuat agen AI* butuh dasar *Menulis perintah yang baik* yang tadi dihapus. Tetap lanjut?" Keputusan tetap di tangan pengguna.
 
@@ -413,7 +417,7 @@ Kalau hasil uji bagus, kedua jalan pintas tersedia di pengaturan dan bisa dimati
 4. Setelah AI menjawab, pengguna menyalin jawabannya lalu kembali ke Peta Belajar.
 5. Aplikasi menampilkan tombol **"Tempel jawaban dari AI"**. Satu ketukan menyimpan jawaban di bawah pertanyaannya.
 
-Cara ini membuat biaya AI kita nol untuk fitur Tanya. Kelemahannya, cara ini kurang mulus dibanding AI bawaan. AI bawaan disiapkan untuk paket berbayar di versi berikutnya.
+Cara ini membuat biaya AI kita nol untuk fitur Tanya. Kelemahannya, cara ini kurang mulus dibanding AI bawaan. AI bawaan masuk daftar fasilitas berbayar di bab terakhir.
 
 ## Simpulkan
 
@@ -422,6 +426,18 @@ Pengguna menulis satu kalimat kesimpulan sendiri. Ada juga tombol "Minta AI mera
 ## Syarat langkah selesai
 
 Langkah selesai kalau pengguna menonton minimal 70% video **dan** menulis satu kesimpulan. Untuk Jalur Teruji ada tambahan kuis satu soal.
+
+# Supaya gratis tetap terarah
+
+Kekhawatiran Acut: aplikasi gratis bisa membuat orang bingung, nyasar, dan berputar-putar tanpa berkembang. Yang membuat orang nyasar biasanya bukan soal gratis atau bayar, melainkan tidak adanya arahan dan komitmen. Karena itu versi gratis memasang tujuh pagar berikut.
+
+1. **Paling banyak 2 jalur aktif.** Untuk mulai jalur ketiga, pengguna harus menyelesaikan atau menjeda salah satu jalur. Berpindah-pindah topik adalah penyebab utama orang berputar di tempat.
+2. **Janji jadwal belajar.** Saat menekan Setuju, pengguna memilih hari dan jam belajar, serta target menyelesaikan modul pertama. Pengingat dikirim oleh HP sendiri, tanpa server dan tanpa biaya.
+3. **Satu tombol Lanjutkan.** Beranda selalu menunjuk tepat ke langkah berikutnya, bukan puluhan pilihan.
+4. **Syarat langkah selesai.** Minimal 70% video ditonton ditambah satu kesimpulan. Jalur Teruji juga punya kuis satu soal.
+5. **Ringkasan mingguan.** Setiap Minggu malam, aplikasi menampilkan kemajuan minggu itu, misalnya "3 langkah, 5 catatan, 2 kesimpulan", beserta kesimpulan yang ditulis pengguna sendiri. Kemajuan yang terlihat membuat orang mau lanjut.
+6. **Jatah 3 rencana baru per bulan.** Jatah ini mencegah orang terus membuat rencana tanpa belajar, sekaligus menjaga biaya. Jalur Teruji dan rencana yang sudah pernah disusun tidak memakan jatah.
+7. **Rencana baru perlu akun Google.** Pengguna tamu tetap bisa memakai semua Jalur Teruji dan rencana yang sudah ada. Aturan ini mencegah penyalahgunaan oleh mesin otomatis.
 
 # Cara kerja di balik layar
 
@@ -449,11 +465,12 @@ Sistem terdiri dari tiga bagian.
 | Tugas | Model | Alasan |
 |---|---|---|
 | Memahami ketikan dan membuat pertanyaan pertama | Claude Haiku 5.5 | Tugas pendek, paling murah |
-| Menyusun rencana: modul dan judul | Claude Sonnet 5.5 | Butuh penalaran urutan belajar yang baik |
+| Menyusun rencana: modul dan judul | Claude Haiku 5.5, cadangan Sonnet 5.5 | Paling murah. Sonnet dipakai hanya kalau uji manual menunjukkan mutu Haiku kurang |
 | Memeriksa urutan rencana setelah diedit | Claude Haiku 5.5 | Pendek dan murah |
 | Menilai kecocokan kandidat video | Claude Haiku 5.5 | Banyak dan berulang, harus murah |
+| Menyusun 200 jalur siap pakai sekaligus | Claude Haiku 5.5 lewat layanan Batch | Separuh harga, hasilnya keluar dalam beberapa jam |
 
-Kalau mutu susunan langkah ternyata kurang, susunan langkah bisa dipindah ke Claude Opus 5.5 dengan biaya sekitar dua kali lipat untuk tahap itu.
+Layanan Batch adalah cara mengirim banyak pekerjaan AI sekaligus untuk dikerjakan tanpa terburu-buru, dengan harga separuh.
 
 # Data yang disimpan
 
@@ -509,7 +526,7 @@ Kalau mutu susunan langkah ternyata kurang, susunan langkah bisa dipindah ke Cla
 | Server, login, database | Supabase | Gratis untuk 50 ribu pengguna aktif per bulan |
 | Fungsi server | Supabase Edge Functions | Gratis 500 ribu panggilan per bulan |
 | Cari video | YouTube Data API | Resmi dan gratis dengan jatah harian |
-| AI pemilih | Claude API (Haiku 5.5 dan Sonnet 5.5) | Murah untuk tugas berulang, kuat untuk menyusun urutan |
+| AI pemilih | Claude API (Haiku 5.5, cadangan Sonnet 5.5) | Paling murah untuk tugas berulang, dengan cadangan untuk mutu |
 | Pembuatan berkas aplikasi | EAS Build gratis, atau dibangun di komputer | Jatah gratis 15 kali per bulan untuk Android |
 | Halaman privasi dan hapus akun | Halaman web gratis | Syarat Play Store |
 
@@ -517,55 +534,51 @@ Kalau Jeumpa ternyata dibuat dengan teknologi lain, misalnya Flutter, pilihan in
 
 **Catatan Supabase.** Proyek gratis berhenti sementara kalau tidak dipakai selama seminggu. Selama aplikasi dipakai setiap hari, ini tidak terjadi.
 
-# Biaya dan hitungan uang
+# Biaya dan siapa yang menanggung
 
-Semua angka rupiah memakai perkiraan kurs Rp16.500 per dolar AS.
+Pengguna tidak membayar apa pun. Semua biaya di bawah ini ditanggung kita. Angka rupiah memakai perkiraan kurs Rp16.500 per dolar AS.
 
 ## Biaya satu rencana baru
 
 | Pekerjaan AI | Model | Biaya |
 |---|---|---|
 | Memahami keinginan, sekitar 1.500 token masuk dan 500 keluar | Haiku 5.5 | Rp7 |
-| Menyusun rencana, sekitar 2.000 token masuk dan 1.500 keluar | Sonnet 5.5 | Rp314 |
+| Menyusun rencana, sekitar 2.000 token masuk dan 1.500 keluar | Haiku 5.5 | Rp16 |
 | Memeriksa rencana yang diedit | Haiku 5.5 | Rp7 |
 | Menilai kandidat untuk 8 judul | Haiku 5.5 | Rp158 |
-| **Jumlah untuk topik kecil** | | **sekitar Rp490** |
+| **Jumlah untuk topik kecil** | | **sekitar Rp190** |
 
-Untuk topik besar seperti AI dari 0 sampai ahli, dengan sekitar 30 judul, biayanya sekitar Rp1.200. Biaya ini dibayar bertahap per modul, dan berhenti kalau pengguna berhenti.
+Untuk topik besar seperti AI dari 0 sampai ahli, dengan sekitar 30 judul, biayanya sekitar Rp640. Biaya ini keluar bertahap per modul, dan berhenti kalau pengguna berhenti. Kalau rencana ternyata perlu disusun dengan Sonnet 5.5, biayanya naik menjadi sekitar Rp490 untuk topik kecil dan Rp1.170 untuk topik besar.
 
-Jalur yang dipakai ulang tidak memakan biaya AI sama sekali. Harga yang dipakai: Haiku 5.5 US$0,10 per sejuta token masuk dan US$0,50 per sejuta token keluar; Sonnet 5.5 US$2 dan US$10.
+Harga yang dipakai: Haiku 5.5 US$0,10 per sejuta token masuk dan US$0,50 per sejuta token keluar; Sonnet 5.5 US$2 dan US$10.
+
+## Tiga cara menekan biaya
+
+1. **200 jalur siap pakai.** Topik yang paling banyak dicari, misalnya membuat konten, Excel, Canva, AI, dan menjahit, disusun sekali sebelum tayang lewat layanan Batch. Biayanya sekitar Rp40 ribu dengan Haiku, atau Rp80 ribu kalau perlu Sonnet. Setelah itu ribuan pengguna memakainya tanpa biaya AI.
+2. **Dipakai ulang per rencana dan per judul.** Rencana yang sama, atau judul yang sama dengan level, bahasa, dan perangkat yang sama, tidak disusun dan dinilai ulang.
+3. **Batas anggaran bulanan.** Kalau biaya AI bulan itu mencapai batas, rencana baru masuk antrean dan disusun lewat Batch pada malam hari dengan harga separuh. Pengguna diberi tahu: "Rencanamu siap besok pagi. Sambil menunggu, coba Jalur Teruji ini."
 
 ## Biaya bulanan
 
-| Masa | Perkiraan | Keterangan |
-|---|---|---|
-| Uji tertutup, November | Rp30 ribu | 20 penguji × 3 jalur baru. Batas siaga Rp75 ribu |
-| 3 bulan setelah tayang | Rp300 sampai 720 ribu | 1.000 pengguna aktif. Angka rendah kalau 60% jalur dipakai ulang |
-| Supabase, YouTube API, EAS Build, Play Console | Rp0 | Masih dalam jatah gratis |
+| Masa | Target | Cadangan | Keterangan |
+|---|---|---|---|
+| November, uji tertutup | Rp65 ribu | Rp105 ribu | 200 jalur siap pakai ditambah 20 penguji × 3 rencana baru. Batas siaga Rp150 ribu |
+| 3 bulan setelah tayang | Rp160 ribu | Rp720 ribu | 1.000 pengguna aktif. Target kalau 60% permintaan terpenuhi jalur siap pakai. Batas anggaran Rp300 ribu |
+| Supabase, YouTube API, EAS Build, Play Console | Rp0 | Rp0 | Masih dalam jatah gratis |
+
+Biaya terburuk per pengguna dibatasi oleh jatah 3 rencana baru per bulan, yaitu sekitar Rp1.900. Rata-ratanya jauh lebih kecil, sekitar Rp160 per pengguna aktif per bulan.
 
 Akun Play Console memakai akun Jeumpa yang sudah ada, jadi tidak ada biaya pendaftaran baru.
 
-**Modal tunai awal:** saldo Claude API. Saran pengisian pertama US$5, sekitar Rp83 ribu, cukup untuk sekitar 170 jalur baru. Pengisian ini perlu persetujuan Acut.
-
-## Sumber pemasukan
-
-YouTube tidak membagi apa pun kepada aplikasi yang menyematkan video. Pemasukan harus datang dari fitur milik kita sendiri.
-
-1. **Paket Plus**, perkiraan Rp15 ribu per bulan. Isinya AI bawaan untuk Tanya dan Simpulkan tanpa salin-tempel, jalur baru tanpa batas, dan ekspor buku catatan ke PDF. Pengguna gratis mendapat 3 jalur baru per bulan dan semua Jalur Teruji.
-2. **Lembaga**, misalnya dinas, balai pelatihan, sekolah vokasi, atau komunitas, yang memesan jalur khusus untuk anggotanya. Harganya belum diuji, perkiraan Rp1 sampai 3 juta per jalur.
-3. **Afiliasi** alat dan kursus berbayar yang relevan dengan jalur.
-4. **Kerja sama kreator.** Kreator ikut untung dari penonton yang kita kirim, sehingga mereka punya alasan untuk mempromosikan aplikasi ini.
-
-## Hitungan 3 bulan setelah tayang
+## Modal dan pemasukan
 
 | | Target | Cadangan |
 |---|---|---|
-| Pengguna aktif per bulan | 1.000 | 400 |
-| Pelanggan Plus | 3% = 30 orang | 1% = 4 orang |
-| Pemasukan Plus per bulan | Rp450 ribu | Rp60 ribu |
-| Biaya AI per bulan | Rp300 sampai 720 ribu | Rp120 sampai 290 ribu |
+| Modal tunai sampai tayang | Rp100 ribu | Rp150 ribu |
+| Modal tunai per bulan setelah tayang | Rp160 ribu | Rp300 ribu, sesuai batas anggaran |
+| Pemasukan versi gratis | Rp0 | Rp0 |
 
-**Kesimpulan uang yang jujur.** Pada 1.000 pengguna, pemasukan dan biaya kira-kira impas. Untung yang berarti butuh sekitar 5.000 pengguna aktif, atau satu sampai dua kontrak lembaga. Modal tunai kecil, jadi balik modal tunai bisa terjadi pada bulan kedua setelah Paket Plus dibuka, dengan cadangan bulan keenam. Modal terbesar sebenarnya waktu Acut.
+**Kesimpulan uang yang jujur.** Versi ini tidak menghasilkan uang, dan memang tidak dimaksudkan begitu. Tujuannya membuktikan bahwa jalur kita benar-benar membantu orang belajar. Bukti itu, berupa jumlah pengguna, nilai "Membantu", dan jumlah yang menyelesaikan jalur, menjadi bahan untuk membuka fasilitas berbayar, mengajak lembaga, dan mencari sponsor. Modal tunainya kecil. Modal terbesar adalah waktu Acut.
 
 # Cakupan versi 1 dan versi berikutnya
 
@@ -583,27 +596,31 @@ YouTube tidak membagi apa pun kepada aplikasi yang menyematkan video. Pemasukan 
 - Penilaian "Membantu" dan "Tidak sesuai", dengan video cadangan
 - Buku catatan, pencarian, dan berbagi ke WhatsApp
 - Kemajuan dan syarat langkah selesai
+- Pagar supaya terarah: paling banyak 2 jalur aktif, janji jadwal, pengingat, ringkasan mingguan, jatah 3 rencana baru per bulan
+- 200 jalur siap pakai untuk topik populer
 - Hapus akun dan kebijakan privasi
 
 ## Ditunda ke versi berikutnya
 
-- **Paket Plus dan AI bawaan:** setelah ada 1.000 pengguna aktif.
+- **Semua fasilitas berbayar:** disimpan di bab terakhir, dibuka setelah syaratnya terpenuhi.
 - **iPhone:** setelah Android stabil. Kodenya sama, tapi ada akun dan pemeriksaan Apple.
-- **Website:** setelah ada pemasukan pertama. Memakai kode dan server yang sama.
+- **Website:** setelah ada 1.000 pengguna aktif. Memakai kode dan server yang sama.
 - **TikTok:** TikTok tidak menyediakan pemutar yang bisa dikendalikan seperti YouTube, jadi ditunda.
 - **Tombol rekam suara khusus:** sementara memakai mikrofon di papan ketik.
 - **Ruang Kurator:** halaman khusus untuk memeriksa dan mengganti video. Di versi 1, pemeriksaan memakai dasbor Supabase ditambah laporan mingguan dari Acut2.
-- **Pengingat harian, lencana, dan teman belajar.**
+- **Lencana dan teman belajar.**
 
 # Jadwal
 
 | Kegiatan | Siapa | Kapan | Bukti selesai |
 |---|---|---|---|
-| Uji mesin pemilih secara manual untuk 3 topik | Acut2 menyusun, Acut menilai | 19 sampai 22 Okt | 3 jalur dan nilai tepat sasaran dari Acut |
+| Ngobrol dengan 1 sampai 2 orang yang membutuhkan, memakai 4 pertanyaan dari Acut2 | Acut | Paling lambat 22 Okt | Jawaban mereka, berupa tangkapan layar WA atau catatan |
+| Uji mesin pemilih secara manual untuk 3 topik, membandingkan rencana dari Haiku dan Sonnet | Acut2 menyusun, Acut menilai | 19 sampai 22 Okt | 3 jalur, nilai tepat sasaran dari Acut, dan pilihan model |
 | Uji pemutar resmi di HP Acut: putar, jeda, baca menit, Mode Layar Lebar, jalan pintas tombol volume dan goyang HP | Acut2 membuat, Acut mencoba | 21 sampai 23 Okt | Rekaman layar dari Acut dan catatan hasil tiap jalan pintas |
-| Membuka akun Supabase dan Google Cloud, mengisi saldo Claude API | Acut, dipandu Acut2 | 24 sampai 25 Okt | Tangkapan layar ketiga akun |
+| Membuka akun Supabase dan Google Cloud, mengisi saldo Claude API sekitar Rp100 ribu | Acut, dipandu Acut2 | 24 sampai 25 Okt | Tangkapan layar ketiga akun |
 | Merekrut penguji, target 20, cadangan 12 | Acut | 25 sampai 31 Okt | Daftar nama dan email Google |
 | Membangun versi 1 | Acut2 | 26 Okt sampai 6 Nov | Berkas aplikasi untuk diuji |
+| Menyusun 200 jalur siap pakai lewat layanan Batch | Acut2, daftar topik disetujui Acut | 1 sampai 6 Nov | Daftar topik dan jumlah jalur yang tersimpan |
 | Uji internal di HP Acut dan perbaikan | Acut, Acut2 | 7 sampai 8 Nov | Daftar temuan yang sudah diperbaiki |
 | Uji tertutup 14 hari | Penguji | 9 sampai 23 Nov | Jumlah penguji aktif di Play Console |
 | Mengajukan akses produksi | Acut | 24 Nov | Tangkapan layar pengajuan |
@@ -619,16 +636,19 @@ Selama uji tertutup, Acut2 mengirim laporan mingguan berisi angka-angka di bab U
 | Jatah pencarian YouTube hanya cukup sekitar 15 sampai 25 rencana baru per hari | Cari video bertahap per modul, pakai ulang per judul, susun topik populer di malam hari, minta tambahan jatah setelah tayang |
 | Pengguna mengedit rencana sampai urutannya kacau | AI memeriksa urutan dan memberi peringatan lembut, keputusan tetap di pengguna |
 | Penguji kurang dari 12 selama 14 hari | Rekrut 20, kirim pengingat lewat WhatsApp, dan siapkan tugas kecil harian |
+| Penguji berebut dengan Jeumpa | Satu orang boleh menguji dua aplikasi. Ajak penguji yang sama untuk keduanya, dan geser jadwal supaya tidak bersamaan |
 | Kreator mematikan izin pemutaran di aplikasi lain | Saring sejak awal, dan otomatis ganti dengan cadangan |
 | Tombol atau menu tidak sengaja menutupi video, sehingga melanggar aturan YouTube | Mode Layar Lebar menggeser video, tidak menutupinya. Setiap tampilan diperiksa sebelum tayang |
 | Pemeriksa Play Store menolak | Tanpa izin khusus, kebijakan privasi lengkap, dan tombol hapus akun |
-| Belum ada yang mau membayar | Versi 1 gratis untuk membuktikan manfaat, lalu uji Paket Plus dan tawaran ke satu lembaga |
+| Biaya AI ditanggung Acut tanpa pemasukan | Jalur siap pakai, jatah 3 rencana per bulan, batas anggaran Rp300 ribu per bulan, dan antrean malam |
+| Penyalahgunaan oleh mesin otomatis yang membuat rencana terus-menerus | Rencana baru wajib akun Google, dengan jatah per akun |
+| Gratis membuat pengguna nyasar dan tidak berkembang | Tujuh pagar di bab Supaya Gratis Tetap Terarah |
 | Video cepat basi, terutama topik AI | Saring video lama dan segarkan data setiap 30 hari |
 | Bersaing dengan Curator AI dan aplikasi asing | Bahasa Indonesia, pertanyaan pilihan, Jalur Teruji, dan penilaian pelajar Indonesia |
 
 # Website nanti
 
-Website dibuat setelah dua syarat terpenuhi: ada 1.000 pengguna aktif dan ada pemasukan pertama. Karena aplikasi memakai Expo, sebagian besar kode bisa dipakai ulang untuk website, dengan server dan database yang sama. Yang perlu dibeli saat itu hanya domain, sekitar Rp150 sampai 200 ribu per tahun.
+Website dibuat setelah ada 1.000 pengguna aktif per bulan. Karena aplikasi memakai Expo, sebagian besar kode bisa dipakai ulang untuk website, dengan server dan database yang sama. Yang perlu dibeli saat itu hanya domain, sekitar Rp150 sampai 200 ribu per tahun.
 
 Website juga membuka jalan untuk pemakaian di laptop, yang lebih nyaman untuk belajar AutoCAD, Excel, atau topik lain yang dipraktikkan di komputer.
 
@@ -637,7 +657,7 @@ Website juga membuka jalan untuk pemakaian di laptop, yang lebih nyaman untuk be
 1. **Nama aplikasi.** Nama kerjanya Peta Belajar. Nama resmi dibutuhkan sebelum 9 November untuk halaman Play Store.
 2. **Teknologi.** Setuju Expo dan Supabase, atau samakan dengan Jeumpa? Mohon kabari Jeumpa dibuat dengan apa dan kodenya disimpan di mana.
 3. **Akun layanan.** Setuju membuka akun Supabase dan Google Cloud memakai email Acut. Acut2 tidak boleh masuk ke akun Acut tanpa izin.
-4. **Saldo AI.** Setuju mengisi saldo Claude API sekitar US$5 sebagai modal awal.
+4. **Modal biaya AI.** Setuju menanggung biaya AI: sekitar Rp100 ribu sampai tayang (batas Rp150 ribu), lalu paling banyak Rp300 ribu per bulan.
 5. **Tiga topik Jalur Teruji pertama.** Usulan Acut2: "membuat konten", "AutoCAD", dan "Excel untuk kerja".
 6. **Daftar penguji.** 20 orang dengan akun Google, paling lambat 31 Oktober.
 
@@ -654,6 +674,65 @@ Website juga membuka jalan untuk pemakaian di laptop, yang lebih nyaman untuk be
 | 16 Okt | Cara memilih: gabungan jalur teruji dan jalur otomatis | Pengguna boleh mengetik topik apa saja |
 | 16 Okt | Ditambah layar Rencana belajar: judul bisa diedit, video dicari setelah Setuju, bertahap per modul | Usulan Acut; pengguna ikut menentukan isi, dan jatah YouTube lebih hemat |
 | 16 Okt | Ditambah Mode Layar Lebar dan jalan pintas tombol volume dan goyang HP | Usulan Acut: menonton hampir layar penuh dengan tombol seperti iPhone, tanpa melanggar larangan YouTube menutupi video |
+| 16 Okt | Model bayar per pemakaian dibahas lalu ditolak: biaya AI + 50%, kemudian + 20% | Penilaian Acut: tetap terasa mahal, dan pengguna tidak punya alasan kuat membayar |
+| 16 Okt | Versi 2.0: semua fasilitas gratis untuk pengguna; rencana berbayar disimpan di bab terakhir | Keputusan Acut: manfaat dibuktikan dulu |
+| 16 Okt | Ditambah tujuh pagar supaya gratis tetap terarah, dan rencana disusun dengan Haiku | Kekhawatiran Acut bahwa gratis membuat orang nyasar; biaya harus serendah mungkin |
+
+# Fasilitas berbayar untuk tahap lanjutan
+
+Bab ini **disimpan, belum dibangun.** Isinya bahan untuk peningkatan aplikasi setelah versi gratis terbukti membantu.
+
+## Syarat dibuka
+
+- Minimal 1.000 pengguna aktif per bulan, dua bulan berturut-turut.
+- Minimal 60% video pertama dinilai "Membantu".
+- Ada permintaan nyata dari pengguna, misalnya mereka meminta AI bawaan atau rencana tambahan.
+
+**Janji kepada pengguna:** semua yang gratis di versi 1 tetap gratis. Fasilitas berbayar hanya menambah, tidak mengambil.
+
+## Pelajaran dari diskusi 16 Oktober
+
+Pengguna tidak mau membayar untuk "dicarikan video", sebab mencari sendiri itu gratis. Yang mungkin mau dibayar adalah **hasil**: pendampingan sampai bisa, kemudahan, dan pengakuan. Jadi setiap fasilitas berbayar harus menjual hasil, bukan akses ke video.
+
+## Calon fasilitas berbayar
+
+| Fasilitas | Isi | Perkiraan harga |
+|---|---|---|
+| Pendampingan sampai bisa | AI bawaan untuk Tanya dan Simpulkan tanpa salin-tempel, rencana baru tanpa batas, laporan kemajuan, pengingat pintar, ekspor buku catatan ke PDF | Rp15 ribu per bulan |
+| Saldo isi ulang | Untuk pengguna yang butuh rencana baru di atas jatah gratis | Rp10 ribu untuk sekitar 30 rencana topik kecil, atau 12 kalau memakai Sonnet |
+| Sertifikat | Tes akhir buatan kita untuk Jalur Teruji, dengan sertifikat yang bisa dibagikan | Rp10 sampai 25 ribu per sertifikat, belum diuji |
+| Jalur untuk lembaga | Dinas, balai pelatihan, sekolah vokasi, atau komunitas memesan jalur khusus dan laporan kemajuan anggotanya | Rp1 sampai 3 juta per jalur |
+| Sponsor dan afiliasi | Iklan atau tautan alat yang relevan, misalnya aplikasi edit video atau toko laptop, di luar pemutar video | Sesuai kesepakatan |
+| Kerja sama kreator | Kreator mempromosikan aplikasi, sebab mereka ikut untung dari penonton yang kita kirim | Bagi hasil atau promosi bersama |
+
+## Hitungan saldo isi ulang
+
+Hitungan dari diskusi 16 Oktober, dengan bagian sistem 20%:
+
+| Urutan | Potongan | Sisa |
+|---|---|---|
+| Pengguna membayar | | Rp10.000 |
+| PPN 12%, sudah termasuk harga dan dipungut Google | Rp1.071 | Rp8.929 |
+| Layanan Google 15% | Rp1.339 | Rp7.589 |
+| Sistem 20% | Rp1.518 | Rp6.071 untuk AI |
+
+Dengan Haiku untuk menyusun rencana, Rp6.071 cukup untuk sekitar 30 rencana topik kecil. Dengan Sonnet, cukup untuk sekitar 12.
+
+## Perkiraan pemasukan setelah dibuka
+
+| | Target | Cadangan |
+|---|---|---|
+| Pengguna aktif per bulan | 1.000 | 400 |
+| Pelanggan Pendampingan | 3% = 30 orang | 1% = 4 orang |
+| Pemasukan Pendampingan per bulan, sebelum potongan | Rp450 ribu | Rp60 ribu |
+| Kontrak lembaga dalam 6 bulan | 1 kontrak, Rp1 sampai 3 juta | Belum ada |
+
+## Aturan yang wajib diingat
+
+- **Pembayaran di aplikasi wajib lewat Google Play Billing.** Ada PPN dan potongan Google 15%, sehingga kita menerima sekitar 76% dari harga.
+- **Harga minimum produk di Play Store Indonesia sekitar Rp3.000.** Angka ini dari data 2015 dan perlu dicek ulang. Akibatnya, bayar per sekali pakai yang sangat kecil tidak bisa dilakukan.
+- **YouTube melarang memungut bayaran untuk menonton** dan melarang memberi hadiah karena menonton. Yang dijual harus fasilitas milik kita sendiri.
+- **Langganan dan saldo perlu cara berhenti dan pengembalian dana yang jelas,** sebab keluhan tagihan adalah keluhan terbanyak di aplikasi pesaing seperti Coursiv.
 
 # Sumber
 
