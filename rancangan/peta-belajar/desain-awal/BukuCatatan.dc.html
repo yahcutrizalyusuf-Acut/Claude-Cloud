@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Buku catatan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{text-decoration:none}
+</style>
+</helmet>
+<div style="width: 360px; height: 800px; overflow: hidden; background: #F6F7F9; color: #111A27; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-direction: column;">
+
+  <header style="height: 64px; flex: none; display: flex; align-items: center; gap: 4px; padding: 0 8px 0 16px; background: #FFFFFF;">
+    <span style="flex: 1; font-size: 22px; font-weight: 700;">Buku Catatan</span>
+    <button type="button" aria-label="Bagikan catatan" style="width: 48px; height: 48px; border: 0; border-radius: 24px; background: transparent; color: #1D3B70; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg></button>
+  </header>
+
+  <div style="flex: none; padding: 0 16px 12px; background: #FFFFFF; border-bottom: 1px solid #E1E5EB; display: flex; flex-direction: column; gap: 12px;">
+    <label style="display: flex; align-items: center; gap: 10px; height: 48px; border-radius: 24px; background: #F6F7F9; padding: 0 16px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4B5667" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Cari catatan</span>
+      <input placeholder="Cari di catatanmu" style="flex: 1; min-width: 0; border: 0; background: transparent; font: 16px 'Plus Jakarta Sans', sans-serif; color: #111A27; outline: none;">
+    </label>
+    <div style="display: flex; gap: 8px; overflow: hidden;">
+      <button type="button" aria-pressed="true" style="height: 36px; flex: none; padding: 0 14px; border: 0; border-radius: 18px; background: #1D3B70; color: #FFFFFF; font: 700 14px 'Plus Jakarta Sans', sans-serif;">Semua</button>
+      <button type="button" aria-pressed="false" style="height: 36px; flex: none; padding: 0 14px; border: 1.5px solid #E1E5EB; border-radius: 18px; background: #FFFFFF; color: #111A27; font: 600 14px 'Plus Jakarta Sans', sans-serif;">Catatan</button>
+      <button type="button" aria-pressed="false" style="height: 36px; flex: none; padding: 0 14px; border: 1.5px solid #E1E5EB; border-radius: 18px; background: #FFFFFF; color: #111A27; font: 600 14px 'Plus Jakarta Sans', sans-serif;">Pertanyaan</button>
+      <button type="button" aria-pressed="false" style="height: 36px; flex: none; padding: 0 14px; border: 1.5px solid #E1E5EB; border-radius: 18px; background: #FFFFFF; color: #111A27; font: 600 14px 'Plus Jakarta Sans', sans-serif;">Kesimpulan</button>
+    </div>
+  </div>
+
+  <main style="flex: 1; min-height: 0; overflow: hidden; padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="width: 10px; height: 10px; border-radius: 50%; background: #2F6BC6;"></span>
+      <h2 style="margin: 0; flex: 1; font-size: 16px; font-weight: 700;">Video promosi warung kopi</h2>
+      <span style="font-size: 12px; color: #4B5667;">7 isian</span>
+    </div>
+
+    <article style="background: #FFFFFF; border: 1px solid #E1E5EB; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+      <span style="font-size: 12px; font-weight: 700; color: #4B5667;">Langkah 4 · Memotong klip di CapCut</span>
+      <div style="display: flex; gap: 10px; align-items: flex-start;">
+        <button type="button" aria-label="Putar dari 01:17" style="height: 28px; flex: none; padding: 0 10px; border: 0; border-radius: 14px; background: #E7EDF8; color: #1D3B70; font: 700 12px 'Plus Jakarta Sans', sans-serif; font-variant-numeric: tabular-nums;">01:17</button>
+        <span style="font-size: 14px; line-height: 1.45;">Tahan klip, lalu geser ke kiri untuk memotong.</span>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: flex-start;">
+        <button type="button" aria-label="Putar dari 04:05" style="height: 28px; flex: none; padding: 0 10px; border: 0; border-radius: 14px; background: #FDF3DC; color: #6E4A00; font: 700 12px 'Plus Jakarta Sans', sans-serif; font-variant-numeric: tabular-nums;">04:05</button>
+        <span style="font-size: 14px; line-height: 1.45;"><strong>Tanya:</strong> Kenapa ujung klip jadi hitam?</span>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: flex-start;">
+        <button type="button" aria-label="Putar dari 06:32" style="height: 28px; flex: none; padding: 0 10px; border: 0; border-radius: 14px; background: #E7EDF8; color: #1D3B70; font: 700 12px 'Plus Jakarta Sans', sans-serif; font-variant-numeric: tabular-nums;">06:32</button>
+        <span style="font-size: 14px; line-height: 1.45;">Tombol Pisah membelah klip jadi dua.</span>
+      </div>
+    </article>
+
+    <article style="background: #FFFFFF; border: 1px solid #E1E5EB; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+      <span style="font-size: 12px; font-weight: 700; color: #4B5667;">Langkah 3 · Memasukkan foto dan video</span>
+      <div style="display: flex; gap: 10px; align-items: flex-start; background: #E6F3EC; border-radius: 12px; padding: 10px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F6B42" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z"/></svg>
+        <span style="font-size: 14px; line-height: 1.45;"><strong>Kesimpulan:</strong> Foto menu paling bagus dimasukkan dulu, baru video suasana.</span>
+      </div>
+    </article>
+
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="width: 10px; height: 10px; border-radius: 50%; background: #2E8B57;"></span>
+      <h2 style="margin: 0; flex: 1; font-size: 16px; font-weight: 700;">Belajar Claude dari Nol</h2>
+      <span style="font-size: 12px; color: #4B5667;">2 isian</span>
+    </div>
+    <article style="background: #FFFFFF; border: 1px solid #E1E5EB; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+      <span style="font-size: 12px; font-weight: 700; color: #4B5667;">Langkah 2 · Menulis perintah yang jelas</span>
+      <div style="display: flex; gap: 10px; align-items: flex-start;">
+        <button type="button" aria-label="Putar dari 02:48" style="height: 28px; flex: none; padding: 0 10px; border: 0; border-radius: 14px; background: #E7EDF8; color: #1D3B70; font: 700 12px 'Plus Jakarta Sans', sans-serif; font-variant-numeric: tabular-nums;">02:48</button>
+        <span style="font-size: 14px; line-height: 1.45;">Sebutkan peran, tugas, dan contoh hasil.</span>
+      </div>
+    </article>
+  </main>
+
+  <nav aria-label="Navigasi utama" style="height: 80px; flex: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #FFFFFF; border-top: 1px solid #E1E5EB;">
+    <a href="Beranda.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #4B5667;">
+      <span style="width: 64px; height: 32px; display: flex; align-items: center; justify-content: center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></svg></span>
+      <span style="font-size: 12px; font-weight: 600;">Beranda</span>
+    </a>
+    <a href="PetaJalur.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #4B5667;">
+      <span style="width: 64px; height: 32px; display: flex; align-items: center; justify-content: center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6" stroke-dasharray="1 3"/></svg></span>
+      <span style="font-size: 12px; font-weight: 600;">Jalurku</span>
+    </a>
+    <a href="BukuCatatan.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1D3B70;">
+      <span style="width: 64px; height: 32px; border-radius: 16px; background: #E7EDF8; display: flex; align-items: center; justify-content: center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h11a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6z"/><path d="M6 3v18M10 8h5M10 12h5"/></svg></span>
+      <span style="font-size: 12px; font-weight: 700;">Buku Catatan</span>
+    </a>
+    <a href="Profil.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #4B5667;">
+      <span style="width: 64px; height: 32px; display: flex; align-items: center; justify-content: center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+      <span style="font-size: 12px; font-weight: 600;">Profil</span>
+    </a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

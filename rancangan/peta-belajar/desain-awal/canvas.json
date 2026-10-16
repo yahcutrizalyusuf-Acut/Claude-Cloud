@@ -1,0 +1,50 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-16T09:30:00Z"},
+  "title": "Desain Peta Belajar",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1280, "h": 1560, "title": "Sistem desain"},
+    "Logo.dc.html": {"x": 1360, "y": 0, "w": 1280, "h": 900, "title": "Logo dan ikon aplikasi"},
+    "Beranda.dc.html": {"x": 0, "y": 1960, "w": 360, "h": 800, "title": "1. Beranda", "is_interactive": true},
+    "Pertanyaan.dc.html": {"x": 440, "y": 1960, "w": 360, "h": 800, "title": "2. Pertanyaan pilihan", "is_interactive": true},
+    "Rencana.dc.html": {"x": 880, "y": 1960, "w": 360, "h": 800, "title": "3. Rencana belajar", "is_interactive": true},
+    "Jadwal.dc.html": {"x": 1320, "y": 1960, "w": 360, "h": 800, "title": "4. Janji jadwal", "is_interactive": true},
+    "PetaJalur.dc.html": {"x": 1760, "y": 1960, "w": 360, "h": 800, "title": "5. Peta jalur", "is_interactive": true},
+    "Belajar.dc.html": {"x": 2200, "y": 1960, "w": 360, "h": 800, "title": "6. Layar Belajar", "is_interactive": true},
+    "PanelCatatan.dc.html": {"x": 2640, "y": 1960, "w": 360, "h": 800, "title": "7. Panel catatan", "is_interactive": true},
+    "LayarLebar.dc.html": {"x": 0, "y": 3160, "w": 800, "h": 360, "title": "8a. Mode Layar Lebar: menonton", "is_interactive": true},
+    "LayarLebarMenu.dc.html": {"x": 880, "y": 3160, "w": 800, "h": 360, "title": "8b. Mode Layar Lebar: tombol ditekan", "is_interactive": true},
+    "BukuCatatan.dc.html": {"x": 1760, "y": 3160, "w": 360, "h": 800, "title": "9. Buku catatan"},
+    "Ringkasan.dc.html": {"x": 2200, "y": 3160, "w": 360, "h": 800, "title": "10. Ringkasan mingguan"},
+    "Profil.dc.html": {"x": 2640, "y": 3160, "w": 360, "h": 800, "title": "11. Profil dan data"},
+    "BerandaGelap.dc.html": {"x": 0, "y": 4360, "w": 360, "h": 800, "title": "Beranda, tema gelap"},
+    "BelajarGelap.dc.html": {"x": 440, "y": 4360, "w": 360, "h": 800, "title": "Layar Belajar, tema gelap"}
+  },
+  "order": [
+    "Main.dc.html",
+    "Logo.dc.html",
+    "Beranda.dc.html",
+    "Pertanyaan.dc.html",
+    "Rencana.dc.html",
+    "Jadwal.dc.html",
+    "PetaJalur.dc.html",
+    "Belajar.dc.html",
+    "PanelCatatan.dc.html",
+    "LayarLebar.dc.html",
+    "LayarLebarMenu.dc.html",
+    "BukuCatatan.dc.html",
+    "Ringkasan.dc.html",
+    "Profil.dc.html",
+    "BerandaGelap.dc.html",
+    "BelajarGelap.dc.html"
+  ],
+  "notes": {
+    "judulFondasi": {"x": 0, "y": -300, "text": "Fondasi: sistem desain dan logo", "kind": "title1", "maxW": 2640},
+    "judulAlur": {"x": 0, "y": 1660, "text": "Alur utama, bisa diklik: Beranda sampai Simpan", "kind": "title1", "maxW": 3000},
+    "judulLain": {"x": 0, "y": 2860, "text": "Mode Layar Lebar dan layar lain", "kind": "title1", "maxW": 3000},
+    "judulGelap": {"x": 0, "y": 4060, "text": "Tema gelap", "kind": "title1", "maxW": 800}
+  },
+  "designSystems": []
+}

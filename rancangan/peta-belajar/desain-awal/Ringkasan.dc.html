@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Ringkasan mingguan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{text-decoration:none}
+</style>
+</helmet>
+<div style="width: 360px; height: 800px; overflow: hidden; background: #F6F7F9; color: #111A27; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-direction: column;">
+
+  <header style="height: 64px; flex: none; display: flex; align-items: center; gap: 4px; padding: 0 4px;">
+    <a href="Beranda.dc.html" aria-label="Tutup" style="width: 48px; height: 48px; border-radius: 24px; color: #111A27; display: flex; align-items: center; justify-content: center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    <span style="flex: 1; font-size: 18px; font-weight: 700;">Minggu ini</span>
+    <span style="font-size: 13px; color: #4B5667; padding-right: 12px;">12–18 Okt</span>
+  </header>
+
+  <main style="flex: 1; min-height: 0; overflow: hidden; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 16px;">
+    <section aria-label="Kartu ringkasan yang bisa dibagikan" style="border-radius: 24px; background: #1D3B70; color: #FFFFFF; padding: 22px 20px; display: flex; flex-direction: column; gap: 18px; position: relative; overflow: hidden;">
+      <svg aria-hidden="true" width="260" height="140" viewBox="0 0 260 140" style="position: absolute; right: -40px; top: -20px; opacity: 0.35;"><path d="M10 120 C 70 120, 80 40, 140 50 S 220 110, 250 20" fill="none" stroke="#9DBBF2" stroke-width="3" stroke-dasharray="1 9" stroke-linecap="round"/><circle cx="250" cy="20" r="7" fill="#F1B73F"/></svg>
+      <div style="display: flex; align-items: center; gap: 10px; position: relative;">
+        <svg width="28" height="28" viewBox="0 0 108 108" aria-hidden="true"><rect width="108" height="108" rx="28" fill="#FFFFFF"/><path d="M38 82 V30 H60 a14 14 0 0 1 0 28 H38" fill="none" stroke="#1D3B70" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.5 15"/><circle cx="60" cy="58" r="10" fill="#E3A21A"/></svg>
+        <span style="font-size: 14px; font-weight: 700; color: #C9D8F5;">Peta Belajar · Acut</span>
+      </div>
+      <div style="position: relative; display: flex; flex-direction: column; gap: 4px;">
+        <span style="font-size: 14px; color: #C9D8F5;">Video promosi warung kopi</span>
+        <span style="font-size: 24px; font-weight: 800; line-height: 1.25;">3 langkah maju minggu ini</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; position: relative;">
+        <div style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 12px 10px; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 22px; font-weight: 800;">5</span><span style="font-size: 12px; color: #C9D8F5;">catatan</span></div>
+        <div style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 12px 10px; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 22px; font-weight: 800;">2</span><span style="font-size: 12px; color: #C9D8F5;">kesimpulan</span></div>
+        <div style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 12px 10px; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 22px; font-weight: 800;">1j 40m</span><span style="font-size: 12px; color: #C9D8F5;">menonton</span></div>
+      </div>
+      <svg width="100%" height="20" viewBox="0 0 280 20" role="img" aria-label="4 dari 9 langkah" style="position: relative;">
+        <line x1="10" y1="10" x2="270" y2="10" stroke="#3B5A92" stroke-width="3" stroke-dasharray="1 7" stroke-linecap="round"/>
+        <line x1="10" y1="10" x2="107" y2="10" stroke="#4FBF83" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="10" cy="10" r="6" fill="#4FBF83"/><circle cx="42" cy="10" r="6" fill="#4FBF83"/><circle cx="75" cy="10" r="6" fill="#4FBF83"/>
+        <circle cx="107" cy="10" r="7.5" fill="#1D3B70" stroke="#F1B73F" stroke-width="3.5"/>
+        <circle cx="140" cy="10" r="5" fill="#1D3B70" stroke="#6F86B3" stroke-width="2"/><circle cx="172" cy="10" r="5" fill="#1D3B70" stroke="#6F86B3" stroke-width="2"/><circle cx="205" cy="10" r="5" fill="#1D3B70" stroke="#6F86B3" stroke-width="2"/><circle cx="237" cy="10" r="5" fill="#1D3B70" stroke="#6F86B3" stroke-width="2"/><circle cx="270" cy="10" r="5" fill="#1D3B70" stroke="#6F86B3" stroke-width="2"/>
+      </svg>
+      <blockquote style="margin: 0; position: relative; border-left: 3px solid #F1B73F; padding: 2px 0 2px 12px; font-size: 15px; line-height: 1.5;">"Foto menu paling bagus dimasukkan dulu, baru video suasana."</blockquote>
+    </section>
+
+    <div style="background: #FFFFFF; border: 1px solid #E1E5EB; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px;">
+      <span style="width: 40px; height: 40px; flex: none; border-radius: 20px; background: #FDF3DC; color: #6E4A00; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg></span>
+      <span style="flex: 1; font-size: 14px; line-height: 1.45;">Janji 3 kali, kamu datang <strong>2 kali</strong>. Jumat masih bisa dikejar.</span>
+    </div>
+
+    <p style="margin: 0; font-size: 12px; color: #4B5667; line-height: 1.5;">Yang dibagikan hanya kartu biru di atas. Isi catatan lain tidak ikut.</p>
+  </main>
+
+  <footer style="flex: none; padding: 12px 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+    <button type="button" style="height: 52px; border: 0; border-radius: 26px; background: #E3A21A; color: #111A27; font: 700 16px 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>Bagikan ke status</button>
+    <a href="Belajar.dc.html" style="height: 52px; border-radius: 26px; background: #1D3B70; color: #FFFFFF; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center;">Lanjutkan langkah 4</a>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

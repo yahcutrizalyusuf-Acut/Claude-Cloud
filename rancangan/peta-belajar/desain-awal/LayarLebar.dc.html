@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Mode Layar Lebar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{text-decoration:none}
+</style>
+</helmet>
+<div style="width: 800px; height: 360px; overflow: hidden; background: #000000; color: #E9EEF5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex;">
+
+  <div style="flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center;">
+    <div role="img" aria-label="Pemutar resmi YouTube, 640 kali 360, sedang diputar" style="width: 640px; height: 360px; background: #0B0F15; color: #6B7686; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border-left: 1px dashed #2A3647; border-right: 1px dashed #2A3647; box-sizing: border-box;">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/></svg>
+      <span style="font-size: 14px; font-weight: 600;">Pemutar resmi YouTube</span>
+      <span style="font-size: 12px;">Sekitar 90% layar · tidak ada apa pun di atasnya</span>
+    </div>
+  </div>
+
+  <nav aria-label="Jalur tombol" style="width: 56px; flex: none; background: #151E2A; border-left: 1px solid #2A3647; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 12px 0; box-sizing: border-box;">
+    <a href="Belajar.dc.html" aria-label="Kembali ke tampilan tegak" style="width: 48px; height: 48px; border-radius: 24px; color: #A9B4C4; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg></a>
+
+    <a href="LayarLebarMenu.dc.html" aria-label="Buka menu: catat, tanya, simpulkan" style="width: 48px; height: 48px; border-radius: 24px; background: #F1B73F; color: #0D131C; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 4px rgba(241,183,63,0.18);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/></svg></a>
+
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;" aria-label="Langkah 4 dari 9">
+      <span style="font-size: 11px; font-weight: 700; color: #A9B4C4; font-variant-numeric: tabular-nums;">4/9</span>
+      <svg width="8" height="48" viewBox="0 0 8 48" aria-hidden="true"><line x1="4" y1="4" x2="4" y2="44" stroke="#2A3647" stroke-width="3" stroke-linecap="round"/><line x1="4" y1="4" x2="4" y2="22" stroke="#4FBF83" stroke-width="3" stroke-linecap="round"/></svg>
+    </div>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":800,"height":360}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Mode Layar Lebar, menu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{text-decoration:none}
+</style>
+</helmet>
+<div style="width: 800px; height: 360px; overflow: hidden; background: #000000; color: #E9EEF5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex;">
+
+  <div style="width: 400px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
+    <div role="img" aria-label="Pemutar resmi YouTube mengecil, dijeda di 06:32" style="width: 384px; height: 216px; background: #0B0F15; color: #6B7686; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border: 1px dashed #2A3647; border-radius: 8px; box-sizing: border-box;">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9v6M14 9v6"/></svg>
+      <span style="font-size: 13px; font-weight: 600;">Pemutar resmi YouTube · dijeda</span>
+    </div>
+    <span style="font-size: 12px; color: #A9B4C4;">Video berjalan lagi setelah kamu simpan</span>
+  </div>
+
+  <section aria-label="Menu catatan" style="flex: 1; min-width: 0; background: #151E2A; border-left: 1px solid #2A3647; padding: 12px 16px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="height: 28px; display: inline-flex; align-items: center; padding: 0 10px; border-radius: 14px; background: #1F2E48; color: #9DBBF2; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;">Menit 06:32</span>
+      <span style="flex: 1; font-size: 13px; color: #A9B4C4;">Memotong klip di CapCut</span>
+      <a href="LayarLebar.dc.html" aria-label="Tutup menu" style="width: 48px; height: 48px; border-radius: 24px; color: #A9B4C4; display: flex; align-items: center; justify-content: center; margin-right: -8px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    </div>
+
+    <div role="radiogroup" aria-label="Jenis isian" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;">
+      <button type="button" role="radio" aria-checked="true" style="height: 48px; border: 0; border-radius: 12px; background: #9DBBF2; color: #0D131C; font: 700 13px 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/></svg>Beri catatan</button>
+      <button type="button" role="radio" aria-checked="false" style="height: 48px; border: 1px solid #2A3647; border-radius: 12px; background: #1C2735; color: #E9EEF5; font: 600 13px 'Plus Jakarta Sans', sans-serif;">Isi pertanyaan</button>
+      <button type="button" role="radio" aria-checked="false" style="height: 48px; border: 1px solid #2A3647; border-radius: 12px; background: #1C2735; color: #E9EEF5; font: 600 13px 'Plus Jakarta Sans', sans-serif;">Tarik 1 kesimpulan</button>
+    </div>
+
+    <label for="isi-lebar" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Isi catatan</label>
+    <textarea id="isi-lebar" placeholder="Tulis yang baru kamu pahami" style="flex: 1; min-height: 0; resize: none; box-sizing: border-box; border: 1.5px solid #9DBBF2; border-radius: 12px; padding: 12px; background: #0D131C; font: 15px/1.5 'Plus Jakarta Sans', sans-serif; color: #E9EEF5; outline: none;">Klip bisa dibelah dua dengan tombol Pisah, lalu bagian yang tidak perlu dihapus.</textarea>
+
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <button type="button" aria-label="Tahan untuk bicara" style="width: 48px; height: 48px; flex: none; border: 1px solid #2A3647; border-radius: 24px; background: #1C2735; color: #9DBBF2; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+      <a href="LayarLebar.dc.html" style="flex: 1; height: 48px; border-radius: 24px; background: #9DBBF2; color: #0D131C; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center;">Simpan &amp; putar lagi</a>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":800,"height":360}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
