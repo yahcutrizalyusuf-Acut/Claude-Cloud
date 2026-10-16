@@ -2,7 +2,7 @@
 title: "Rancangan Sistem Peta Belajar"
 subtitle: "Aplikasi Android pemilih video YouTube untuk belajar apa saja"
 author: "Disusun Acut2 untuk Acut"
-date: "16 Oktober 2026 · Versi rancangan 2.0 · Semua gratis untuk pengguna"
+date: "16 Oktober 2026 · Versi rancangan 2.1 · Semua gratis untuk pengguna"
 ---
 
 # Ringkasan satu halaman
@@ -38,7 +38,7 @@ date: "16 Oktober 2026 · Versi rancangan 2.0 · Semua gratis untuk pengguna"
 2. Jatah pencarian YouTube gratis terbatas. Karena video dicari bertahap per modul, jatah itu cukup untuk sekitar 15 sampai 25 rencana baru per hari.
 3. Biaya AI ditanggung Acut dan belum ada pemasukan. Biaya dibatasi dengan jatah 3 rencana baru per bulan per pengguna dan batas anggaran bulanan.
 
-**Yang perlu Acut putuskan.** Ada enam keputusan, dirinci di bab Keputusan. Yang paling mendesak adalah akun layanan dan modal biaya AI bulanan.
+**Yang perlu Acut putuskan.** Ada tujuh keputusan, dirinci di bab Keputusan. Yang paling mendesak adalah akun layanan dan modal biaya AI bulanan.
 
 # Masalah dan tujuan
 
@@ -227,7 +227,7 @@ Semua catatan, pertanyaan, jawaban, dan kesimpulan dikelompokkan per jalur dan p
 
 ## 10. Profil dan pengaturan
 
-Pengaturannya: AI pilihan (Claude, ChatGPT, Gemini, atau lainnya), bahasa video, pengingat belajar, kebijakan privasi, dan tombol **Hapus akun**. Tombol Hapus akun wajib ada menurut aturan Play Store.
+Pengaturannya: AI pilihan (Claude, ChatGPT, Gemini, atau lainnya), bahasa video, pengingat belajar, kebijakan privasi, tombol **Unduh dataku**, dan tombol **Hapus akun**. Tombol Hapus akun wajib ada menurut aturan Play Store, dan Unduh dataku memenuhi hak pengguna menurut UU Pelindungan Data Pribadi.
 
 # Mesin pemilih video
 
@@ -491,6 +491,81 @@ Layanan Batch adalah cara mengirim banyak pekerjaan AI sekaligus untuk dikerjaka
 - **Hanya data yang perlu yang disimpan.** Tidak ada nomor HP, lokasi, atau kontak.
 - **Hapus akun berarti semua data pribadi dihapus,** sesuai UU Pelindungan Data Pribadi dan aturan Play Store.
 
+# Siapa memegang data
+
+## Tempat data tersimpan
+
+| Tempat | Data | Siapa yang bisa melihat |
+|---|---|---|
+| HP pengguna | Catatan yang belum terkirim, dan semua data pengguna tamu | Hanya pengguna itu. Data tamu tidak pernah sampai ke kita |
+| Database Supabase di akun Acut | Akun, jawaban pertanyaan pilihan, rencana, kemajuan, penilaian video, catatan, pertanyaan, jawaban, kesimpulan | Acut sebagai pemilik akun, dan orang yang Acut beri akses |
+| Google | Nama dan email saat masuk, angka unduhan, laporan aplikasi macet | Acut, lewat Play Console |
+| Anthropic, pembuat Claude | Teks keinginan dan susunan rencana yang dikirim untuk diolah | Disimpan sementara sesuai kebijakan Anthropic, dan secara bawaan tidak dipakai melatih AI |
+| YouTube | Data bahwa video ditonton lewat pemutarnya | YouTube. Catatan pengguna tidak pernah sampai ke YouTube |
+| AI milik pengguna | Pertanyaan yang dikirim lewat menu Bagikan | Urusan pengguna dengan AI-nya, di luar sistem kita |
+
+**Lokasi server.** Database ditempatkan di Singapura, lokasi terdekat yang tersedia di Supabase. Server Jakarta belum terlihat di daftar resmi mereka dan dicek ulang saat akun dibuka. Menurut UU Pelindungan Data Pribadi, data boleh disimpan di luar negeri kalau negara tujuannya punya pelindungan yang setara, dan hal ini harus disebut jelas di kebijakan privasi.
+
+## Siapa yang bisa melihat
+
+- **Acut,** sebagai pemilik akun Supabase, Play Console, dan Claude. Semua akun dijaga dengan verifikasi dua langkah.
+- **Acut2,** hanya kalau Acut memberi akses untuk tugas tertentu.
+- **Pengguna,** untuk datanya sendiri.
+- **Tidak ada pihak lain.**
+
+## Aturan catatan pribadi
+
+Keputusan Acut: catatan pribadi dijaga dengan aturan dan akses terbatas.
+
+- **Isi catatan, pertanyaan, jawaban, dan kesimpulan tidak dibuka.** Laporan hanya memakai angka gabungan.
+- **Pengecualian:** pengguna sendiri meminta bantuan dan mengizinkan, misalnya saat melaporkan masalah.
+- **Setiap pembukaan data pribadi oleh pengelola dicatat:** siapa, kapan, dan apa alasannya.
+- **Jujur kepada diri sendiri:** secara teknis pemilik database tetap bisa membuka isi catatan. Karena itu akses dijaga ketat. Pilihan mengunci catatan di HP pengguna disimpan untuk versi berikutnya.
+
+## Hak pengguna
+
+- **Unduh dataku:** satu file berisi akun, rencana, kemajuan, dan semua catatan. UU Pelindungan Data Pribadi meminta akses diberikan paling lambat 3 × 24 jam, dan tombol ini memenuhinya seketika.
+- **Memperbaiki data, menarik persetujuan, dan menghapus akun,** dari dalam aplikasi maupun lewat halaman web.
+- **Akun yang tidak aktif 24 bulan** diberi tahu lewat email, lalu dihapus kalau tidak ada tanggapan.
+
+## Cadangan dan kebocoran
+
+- **Cadangan otomatis mingguan** ke Google Drive Acut, tanpa biaya, sebab cadangan di paket gratis Supabase terbatas.
+- **Kalau terjadi kebocoran,** pengguna dan lembaga pengawas wajib diberi tahu secara tertulis paling lambat 3 × 24 jam, sesuai Pasal 46 UU Pelindungan Data Pribadi. Acut2 menyiapkan langkah tanggap dan contoh surat pemberitahuan sebelum aplikasi tayang.
+
+# Pemanfaatan data
+
+## Boleh, dan disebut di kebijakan privasi
+
+| Pemanfaatan | Contoh | Syarat |
+|---|---|---|
+| Menjalankan layanan | Menyusun rencana, menyimpan kemajuan, mengirim pengingat | Tidak ada |
+| Memperbaiki mesin pemilih | Video yang sering dinilai "Tidak sesuai" diganti, judul yang sering diedit dirapikan | Tanpa nama |
+| Menyusun Jalur Teruji dan jalur siap pakai | Dari topik yang paling banyak dicari | Tanpa nama |
+| Laporan untuk lembaga, sponsor, dan kreator | "1.200 orang belajar Excel bulan ini, 64% merasa terbantu" | Angka gabungan, minimal 20 orang per angka supaya tidak bisa ditebak, dan hanya data milik kita |
+| Bahan ide usaha baru di Bank Ide | Topik yang banyak dicari tapi videonya sedikit adalah peluang membuat konten atau kelas | Hanya untuk kita, angka gabungan |
+| Menghubungi pengguna soal layanan | Pengingat, pembaruan aplikasi, survei kepuasan | Bisa dimatikan pengguna |
+
+## Boleh hanya dengan persetujuan khusus
+
+Persetujuan ini ditanyakan terpisah, satu per satu, dan pengguna boleh menolak tanpa kehilangan fasilitas apa pun.
+
+- Kabar promosi atau tawaran, termasuk dari sponsor.
+- Testimoni atau kisah berhasil yang memakai nama atau foto pengguna.
+- Laporan kemajuan perorangan untuk lembaga yang memesan jalur.
+- Menghubungkan pengguna dengan pelatihan, lowongan kerja, atau kreator.
+
+## Tidak boleh
+
+- **Menjual, menyewakan, atau menukar data pribadi,** seperti nama, email, catatan, dan riwayat belajar. Ini dilarang aturan Google Play dan UU Pelindungan Data Pribadi.
+- **Membuka isi catatan pribadi** tanpa izin pengguna.
+- **Memakai data untuk tujuan baru** yang tidak disebut di kebijakan privasi, tanpa meminta persetujuan baru.
+- **Mengirim catatan pengguna ke pihak lain** untuk melatih AI.
+- **Mengumpulkan lalu menjual atau menerbitkan statistik YouTube,** misalnya angka tonton atau peringkat kanal. Aturan YouTube melarang data dari jalur resminya dikumpulkan untuk pihak lain. Laporan kita memakai penilaian pengguna kita sendiri.
+- **Menyimpan data YouTube lebih dari 30 hari** tanpa diperbarui.
+
+Kebijakan privasi perlu diperiksa ahli hukum sebelum tayang, sebab akibat pelanggaran UU Pelindungan Data Pribadi bisa berupa denda dan pidana.
+
 # Aturan yang wajib dipatuhi
 
 ## Aturan YouTube
@@ -598,7 +673,8 @@ Akun Play Console memakai akun Jeumpa yang sudah ada, jadi tidak ada biaya penda
 - Kemajuan dan syarat langkah selesai
 - Pagar supaya terarah: paling banyak 2 jalur aktif, janji jadwal, pengingat, ringkasan mingguan, jatah 3 rencana baru per bulan
 - 200 jalur siap pakai untuk topik populer
-- Hapus akun dan kebijakan privasi
+- Hapus akun, Unduh dataku, dan kebijakan privasi
+- Cadangan otomatis mingguan ke Google Drive Acut
 
 ## Ditunda ke versi berikutnya
 
@@ -621,6 +697,7 @@ Akun Play Console memakai akun Jeumpa yang sudah ada, jadi tidak ada biaya penda
 | Merekrut penguji, target 20, cadangan 12 | Acut | 25 sampai 31 Okt | Daftar nama dan email Google |
 | Membangun versi 1 | Acut2 | 26 Okt sampai 6 Nov | Berkas aplikasi untuk diuji |
 | Menyusun 200 jalur siap pakai lewat layanan Batch | Acut2, daftar topik disetujui Acut | 1 sampai 6 Nov | Daftar topik dan jumlah jalur yang tersimpan |
+| Menyusun kebijakan privasi dan langkah tanggap kebocoran, lalu diperiksa ahli hukum | Acut2 menyusun, Acut mencari pemeriksa | 1 sampai 7 Nov | Halaman kebijakan privasi yang sudah diperiksa |
 | Uji internal di HP Acut dan perbaikan | Acut, Acut2 | 7 sampai 8 Nov | Daftar temuan yang sudah diperbaiki |
 | Uji tertutup 14 hari | Penguji | 9 sampai 23 Nov | Jumlah penguji aktif di Play Console |
 | Mengajukan akses produksi | Acut | 24 Nov | Tangkapan layar pengajuan |
@@ -643,6 +720,8 @@ Selama uji tertutup, Acut2 mengirim laporan mingguan berisi angka-angka di bab U
 | Biaya AI ditanggung Acut tanpa pemasukan | Jalur siap pakai, jatah 3 rencana per bulan, batas anggaran Rp300 ribu per bulan, dan antrean malam |
 | Penyalahgunaan oleh mesin otomatis yang membuat rencana terus-menerus | Rencana baru wajib akun Google, dengan jatah per akun |
 | Gratis membuat pengguna nyasar dan tidak berkembang | Tujuh pagar di bab Supaya Gratis Tetap Terarah |
+| Akun Acut dibobol sehingga catatan pengguna terbuka | Verifikasi dua langkah, akses terbatas, catatan pembukaan data, dan langkah tanggap 3 × 24 jam |
+| Mesin memakai angka tonton YouTube untuk menilai video, padahal YouTube membatasi pembuatan angka turunan | Angka hanya dipakai di dalam sistem, tidak ditampilkan atau dijual. Kalau tetap dilarang, bobotnya dipindah ke penilaian pengguna dan kecocokan AI |
 | Video cepat basi, terutama topik AI | Saring video lama dan segarkan data setiap 30 hari |
 | Bersaing dengan Curator AI dan aplikasi asing | Bahasa Indonesia, pertanyaan pilihan, Jalur Teruji, dan penilaian pelajar Indonesia |
 
@@ -660,6 +739,7 @@ Website juga membuka jalan untuk pemakaian di laptop, yang lebih nyaman untuk be
 4. **Modal biaya AI.** Setuju menanggung biaya AI: sekitar Rp100 ribu sampai tayang (batas Rp150 ribu), lalu paling banyak Rp300 ribu per bulan.
 5. **Tiga topik Jalur Teruji pertama.** Usulan Acut2: "membuat konten", "AutoCAD", dan "Excel untuk kerja".
 6. **Daftar penguji.** 20 orang dengan akun Google, paling lambat 31 Oktober.
+7. **Pemeriksa kebijakan privasi.** Siapa ahli hukum yang bisa memeriksa kebijakan privasi sebelum 7 November?
 
 # Riwayat ganti arah
 
@@ -677,6 +757,7 @@ Website juga membuka jalan untuk pemakaian di laptop, yang lebih nyaman untuk be
 | 16 Okt | Model bayar per pemakaian dibahas lalu ditolak: biaya AI + 50%, kemudian + 20% | Penilaian Acut: tetap terasa mahal, dan pengguna tidak punya alasan kuat membayar |
 | 16 Okt | Versi 2.0: semua fasilitas gratis untuk pengguna; rencana berbayar disimpan di bab terakhir | Keputusan Acut: manfaat dibuktikan dulu |
 | 16 Okt | Ditambah tujuh pagar supaya gratis tetap terarah, dan rencana disusun dengan Haiku | Kekhawatiran Acut bahwa gratis membuat orang nyasar; biaya harus serendah mungkin |
+| 16 Okt | Versi 2.1: bab Siapa Memegang Data dan Pemanfaatan Data, tombol Unduh dataku, cadangan mingguan | Pertanyaan Acut soal tempat dan pemakaian data; Acut memilih catatan dijaga dengan aturan dan akses terbatas |
 
 # Fasilitas berbayar untuk tahap lanjutan
 
