@@ -24,3 +24,8 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Buku Kenangan
+buku-kenangan/node_modules/
+buku-kenangan/dist/
+buku-kenangan/data/

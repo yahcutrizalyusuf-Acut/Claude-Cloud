@@ -1,0 +1,15 @@
+{
+  "name": "Buku Kenangan Bersama",
+  "short_name": "Buku Kenangan",
+  "description": "Kumpulkan ucapan, foto, dan suara dari banyak orang untuk satu orang istimewa.",
+  "lang": "id",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf6f0",
+  "theme_color": "#7a2e3a",
+  "icons": [
+    { "src": "/ikon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/ikon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/ikon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

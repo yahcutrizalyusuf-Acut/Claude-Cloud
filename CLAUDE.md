@@ -10,9 +10,10 @@ Claude-Cloud/
 │   ├── src/index.ts
 │   ├── package.json
 │   └── tsconfig.json
-└── python/         → REST API dengan FastAPI
-    ├── main.py
-    └── requirements.txt
+├── python/         → REST API dengan FastAPI
+│   ├── main.py
+│   └── requirements.txt
+└── buku-kenangan/  → Purwarupa website PWA Buku Kenangan Bersama (lihat buku-kenangan/README.md)
 ```
 
 ## Endpoint API
