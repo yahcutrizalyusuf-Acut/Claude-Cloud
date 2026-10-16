@@ -2,7 +2,7 @@
 title: "Rancangan Sistem Peta Belajar"
 subtitle: "Aplikasi Android pemilih video YouTube untuk belajar apa saja"
 author: "Disusun Acut2 untuk Acut"
-date: "16 Oktober 2026 · Versi rancangan 2.2 · Semua gratis untuk pengguna"
+date: "16 Oktober 2026 · Versi rancangan 2.3 · Semua gratis untuk pengguna"
 ---
 
 # Ringkasan satu halaman
@@ -714,6 +714,56 @@ Sepuluh hal yang tidak pernah boleh dilakukan:
 | 10 | Langkah tanggap kebocoran dan contoh surat pemberitahuan | Berkas langkah tanggap |
 | 11 | Formulir Keamanan Data di Play Store sesuai kenyataan | Tangkapan layar Play Console |
 | 12 | Penanggung jawab data dan email kontak tercantum | Kebijakan privasi |
+| 13 | Aturan data dipasang di Supabase dan 22 uji aturan lulus di sana | Hasil uji di Supabase |
+
+# Aturan data di dalam sistem
+
+Batasan hukum di bab sebelumnya tidak hanya ditulis, tapi **dikunci di dalam database**. Kodenya ada di folder `aturan-data`, bersama penjelasan berbahasa mudah di `aturan-data/README.md`.
+
+## Enam kunci
+
+1. **Kunci baris.** Setiap baris data pribadi hanya bisa dibaca dan diubah oleh pemiliknya. Kunci ini juga berlaku untuk pemilik tabel.
+2. **Pengelola tanpa akses langsung.** Peran pengelola laporan, kurator, dan bantuan tidak diberi hak apa pun pada tabel data pribadi. Mereka hanya bisa memakai tampilan angka gabungan dan fungsi resmi.
+3. **Angka gabungan minimal 20 orang.** Laporan hanya menampilkan angka yang mewakili minimal 20 pengguna, dan hanya dari pengguna yang masih setuju. Kalau seseorang menarik persetujuan, datanya langsung keluar dari laporan.
+4. **Catatan dibuka hanya dengan izin pengguna.** Pengguna memberi izin dari aplikasi untuk satu tiket bantuan, paling lama 72 jam. Izin untuk satu tiket tidak berlaku untuk tiket lain atau pengguna lain.
+5. **Catatan akses yang tidak bisa dihapus.** Setiap pembukaan data lewat fungsi resmi dicatat, termasuk percobaan yang ditolak. Catatan ini tidak bisa diubah atau dihapus, bahkan oleh pemilik database.
+6. **Masa simpan otomatis.** Akun yang tidak aktif 23 bulan diberi tahu, lalu dihapus pada bulan ke-24. Izin bantuan kedaluwarsa dihapus, dan data YouTube yang lebih dari 30 hari dibersihkan.
+
+Satu kunci tambahan ada di fungsi server: **penyensor** menghapus email, nomor HP, NIK, dan nomor rekening dari teks keinginan sebelum dikirim ke Claude. Teks juga dipotong paling panjang 300 huruf.
+
+## Siapa boleh apa
+
+| Peran | Boleh | Tidak boleh |
+|---|---|---|
+| Pengguna | Data sendiri: lihat, ubah, unduh, hapus, tarik persetujuan, beri izin bantuan | Data orang lain dan catatan akses |
+| Tamu | Jalur, judul, dan video publik | Data pribadi apa pun |
+| Pengelola laporan | Angka gabungan minimal 20 orang | Tabel data pribadi dan email |
+| Pengelola kurator | Jalur, judul, video, dan nilai video gabungan | Penilaian perorangan |
+| Pengelola bantuan | Catatan seorang pengguna dengan izinnya, untuk satu tiket | Membuka tabel catatan langsung |
+| Fungsi server | Email dari yang setuju menerima promosi, dan pekerjaan masa simpan | Pemakaian lain |
+
+## Hasil uji
+
+Aturan ini diuji di Postgres 16 pada 16 Oktober 2026, dengan tiruan bagian Supabase yang dibutuhkan:
+
+| Uji | Hasil |
+|---|---|
+| Aturan database, misalnya pengguna tidak bisa membaca catatan orang lain, pengelola tidak bisa membuka tabel pribadi, dan catatan akses tidak bisa dihapus | 22 dari 22 lulus |
+| Penyensor, misalnya email dan nomor HP disensor tapi "AutoCAD 2026 rumah tipe 36" tidak | 5 dari 5 lulus |
+
+## Batas yang jujur
+
+- **Pemilik proyek Supabase tetap bisa melewati semua kunci.** Peran pemilik dan kunci server punya hak di atas aturan. Karena itu keduanya hanya dipakai untuk pemeliharaan, dijaga verifikasi dua langkah, dan setiap perintahnya dicatat oleh pgaudit.
+- **Log pgaudit di paket gratis hanya disimpan sebentar,** jadi log diekspor rutin bersama cadangan mingguan.
+- **Penyensor tidak menangkap nama orang atau alamat rumah,** sebab polanya tidak jelas. Kolom keinginan diberi pengingat supaya tidak diisi data pribadi.
+- **Uji perlu diulang di Supabase sungguhan** setelah aturan dipasang.
+
+## Aturan pemakaian akun pemilik
+
+- Hanya Acut yang memegang akun pemilik Supabase.
+- Akun pemilik dipakai untuk pemeliharaan, bukan untuk melihat data pengguna.
+- Setiap bulan Acut2 menyusun laporan dari log pgaudit dan catatan akses: siapa membuka apa, dan kapan.
+- Pembukaan data pribadi tanpa alasan sah diperlakukan sebagai kebocoran, sehingga langkah tanggap 3 × 24 jam berlaku.
 
 # Aturan yang wajib dipatuhi
 
@@ -909,6 +959,7 @@ Website juga membuka jalan untuk pemakaian di laptop, yang lebih nyaman untuk be
 | 16 Okt | Ditambah tujuh pagar supaya gratis tetap terarah, dan rencana disusun dengan Haiku | Kekhawatiran Acut bahwa gratis membuat orang nyasar; biaya harus serendah mungkin |
 | 16 Okt | Versi 2.1: bab Siapa Memegang Data dan Pemanfaatan Data, tombol Unduh dataku, cadangan mingguan | Pertanyaan Acut soal tempat dan pemakaian data; Acut memilih catatan dijaga dengan aturan dan akses terbatas |
 | 16 Okt | Versi 2.2: bab Batasan Hukum Data Pribadi, berisi dasar pemrosesan, syarat persetujuan, data spesifik, batas umur, tenggat, sanksi, garis merah, dan daftar periksa | Permintaan Acut: pelanggaran UU PDP bisa berujung pidana, jadi batasannya harus akurat |
+| 16 Okt | Versi 2.3: aturan data dikunci di database (folder aturan-data), dengan 22 uji database dan 5 uji penyensor yang lulus | Permintaan Acut: sistem tidak boleh mengizinkan akses data yang melawan hukum |
 
 # Fasilitas berbayar untuk tahap lanjutan
 
